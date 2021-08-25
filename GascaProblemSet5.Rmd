@@ -1,0 +1,1061 @@
+---
+title: "Problem Set 5"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+---
+
+
+
+```{r}
+load( "Problem Set 5 R Objects.Rdata" )
+```
+
+
+
+# Problem 1: Report Missing Values
+
+In this problem, we will examine the vector `problem.1.data` for missing data.
+
+## Part (a)
+
+Does the vector contain any `NA` values? Write R code to determine this, and then report your answer using one or two sentences of text.
+
+**Solution**
+
+```{r}
+problem.1.data
+
+any(is.na(problem.1.data))
+```
+There are 4 'NA' values in the data set, which can be observed via displaying the data or using the any statement.
+
+
+
+## Part (b)
+
+How many elements of `problem.1.data` have the value `NA`? Report your result using a `cat()` statement.
+
+**Solution**
+
+```{r}
+cat(
+    "The number of NA values in 'problem.1.data' is:",
+    formatC(
+        sum(is.na(problem.1.data)),
+        format = 'f',
+        digits = 0
+    )
+)
+```
+
+
+
+
+## Part (c)
+
+What proportion of the elements of `problem.1.data` have the value `NA`? Report your result using a `cat()` statement, displaying this value using 2 decimal places.
+
+**Solution**
+
+```{r}
+na = sum(is.na(problem.1.data))
+len = length(problem.1.data)
+calc = na / len
+
+cat(
+    "The proportion of NA values in 'problem.1.data' is:",
+    formatC(
+        calc,
+        format = 'f',
+        digits = 2
+    ),
+    '%'
+)
+```
+
+
+
+## Part (d)
+
+Which locations of `problem.1.data` contain `NA` values? Use a `for` loop to print out a simple report of these values.
+
+**Solution**
+
+```{r}
+loc = which(is.na(problem.1.data))
+
+for (i in 1:length(loc)) {
+    
+    cat(
+        'Location', i, ':',
+        loc[i],
+        '\n'
+    )
+}
+```
+
+
+
+\newpage
+
+End of problem 1
+
+\newpage
+
+
+
+# Problem 2: Report and Replace -9 Values
+
+Some people use the numeric value -9 to represent missing data instead of `NA`. I think this is a bad idea, but people do it nonetheless. The best practice here is that if you encounter a data set that uses -9 values to represent missing data you should convert these to `NA` values, and in this problem we're going to explore this idea.
+
+
+## Part (a)
+
+To see why it's a bad idea to represent missing data by using -9 instead of `NA`, let's start by calculating the sample mean of `problem.2.data`. Report your result using a `cat()` statement, displaying this value with 2 decimal places.
+
+**Solution**
+
+```{r}
+cat(
+    'The mean of problem.2.data is:',
+    formatC(
+        mean(problem.2.data),
+        format = 'f',
+        digits = 2
+    )
+)
+```
+
+
+
+## Part (b)
+
+Does the vector `problem.2.data` contain any -9 values? Write R code to determine this, and then report your answer using one or two sentences of text.
+
+**Solution**
+
+```{r}
+any(problem.2.data == -9)
+```
+
+
+
+## Part (c)
+
+How many elements of `problem.2.data` have the value -9? (Hint: use a vectorized comparison operation.) Report your result using a `cat()` statement.
+
+**Solution**
+
+```{r}
+neg.nine.counter = sum(problem.2.data == -9)
+
+cat(
+    "Counter for '-9' in problem.2.data:",
+    formatC(
+        neg.nine.counter,
+        format = 'f',
+        digits = 0
+    )
+)
+```
+
+
+
+## Part (d)
+
+What proportion of the elements of `problem.2.data` have the value -9? Report your result using a `cat()` statement, displaying this value using 2 decimal places.
+
+**Solution**
+
+```{r}
+len = length(problem.2.data)
+calc = neg.nine.counter / len
+
+cat(
+    "The proportion of NA values in 'problem.1.data' is:",
+    formatC(
+        calc,
+        format = 'f',
+        digits = 2
+    ),
+    '%'
+)
+```
+
+
+
+## Part (e)
+
+Which locations of `problem.2.data` contain `NA` values? Use a `for` loop to print out a simple report of these values. Finally, save these locations in a variable.
+
+**Solution**
+
+```{r}
+loc = which(problem.2.data == -9)
+
+for (i in 1:length(loc)) {
+    
+    cat(
+        'Location', i, ':',
+        loc[i],
+        '\n'
+    )
+}
+```
+
+
+
+## Part (f)
+
+In Lecture 3, Module 3, Section 3, there was a line of code that showed how to assign a single value to multiple locations by using a vector of positive integers.
+
+Using this technique, along with the vector of locations from part (e), assign the value `NA` to the locations in `problem.2.data` that currently have a -9 value.
+
+You only need one line of code to do this.
+
+There's nothing to report here, but write your code cleanly so that the TAs can understand it.
+
+**Solution**
+
+```{r}
+problem.2.data[ loc ] <- NA
+```
+
+
+
+## Part (g)
+
+Calculate the sample mean of the non-missing values of the corrected version of `problem.2.data` that you created in part (f). Report your result using a `cat()` statement, displaying this value with 2 decimal places.
+
+Compare your answer for this part with your answer for part (a). Now do you see why it's a bad idea to use -9 to represent a missing value?
+
+**Solution**
+
+```{r}
+cat(
+    'The mean of problem.2.data is:',
+    formatC(
+        mean(problem.2.data, na.rm = TRUE),
+        format = 'f',
+        digits = 2
+    )
+)
+```
+
+
+
+\newpage
+
+End of problem 2
+
+\newpage
+
+
+
+
+# Problem 3: Report and Replace Outliers
+
+
+## Part (a): Stripchart
+
+Construct a stripchart of the values in `problem.3.data`. Do you think that there are any outliers in this data? Explain your answer with one or two sentences.
+
+**Solution**
+
+```{r}
+stripchart(
+    problem.3.data,
+    ylim = c(0, 2),
+    main = 'Problem 3 Part (a)',
+    xlab = 'x',
+    ylab = 'y',
+    pch = 20,
+    col = 'lavender',
+    method = 'jitter',
+    jitter = 0.5
+)
+```
+Yes, there are two outliers around the 1500 x axis coordinate.
+
+
+
+## Part (b): Histogram
+
+Construct a histogram of the values in `problem.3.data`. Do you think that there are any outliers in this data? Explain your answer with one or two sentences.
+
+**Solution**
+
+```{r}
+hist(
+    problem.3.data,
+    main = 'Problem 3 Part (b)',
+    xlab = 'x',
+    ylab = 'y',
+    breaks = 50,
+    col = 'hotpink'
+)
+```
+
+Yes, there are two outliers around the 1500-x range which can be seen slightly towards the high x range of the histogram.
+
+
+
+## Part (c): Assigning `NA`
+
+For this problem, we're going to assign the value `NA` to the outliers. The challenge here is to specify the outliers. I'm going to suggest that you select a threshold value, and anything above that threshold value is considered an outlier. You'll have a lot of flexibility as to how you define the threshold, but choose something reasonable. 
+
+Use the `which()` function with a vectorized comparison operation to determine the exact locations of the outliers in `problem.3.data`, and then use positive integer indexing to assign `NA` to these values.
+
+You can do this with one line of code, so if you're writing lots of code, then you're doing too much work.
+
+**Solution**
+
+```{r}
+fix.outliers.problem.3.data <- problem.3.data
+
+# select a threshold value
+threshold = 500
+
+# Use the `which()` function with a vectorized comparison operation to determine the exact locations of the outliers
+loc = which(problem.3.data > threshold)
+
+fix.outliers.problem.3.data[loc] <- NA
+```
+
+
+
+## Part (d): Stripchart
+
+Construct a stripchart of the values in `problem.3.data` with the outliers removed. Do you think that there are any outliers in this data? Explain your answer with one or two sentences.
+
+**Solution**
+
+```{r}
+stripchart(
+    fix.outliers.problem.3.data,
+    ylim = c(0, 2),
+    main = 'Problem 3 Part (d)',
+    xlab = 'x',
+    ylab = 'y',
+    pch = 20,
+    col = 'lavender',
+    method = 'jitter',
+    jitter = 0.5
+)
+```
+Although the value at 220 is slightly removed from its closest points ~200(x), I don't think it should be considered an outlier.
+
+
+
+## Part (e): Histogram
+
+Construct a histogram of the values in your cleaned version of `problem.3.data`. Then superimpose the best-fitting normal density curve on the data.
+
+There's a subtle point here: when we fixed the outliers, we changed their values to `NA`. But when we fit the normal density curve, we calculate the sample mean and sample standard deviation. What do we have to do to calculate the sample mean and sample standard deviation when there are `NA` values in the data?
+
+
+**Solution**
+
+```{r}
+# calculate the sample mean and sample standard deviation, remove na values
+mean.calc = mean(fix.outliers.problem.3.data, na.rm = TRUE)
+sd.calc = sd(fix.outliers.problem.3.data, na.rm = TRUE)
+
+# Add prob = TRUE
+hist(
+    fix.outliers.problem.3.data,
+    prob = TRUE,
+    main = 'Problem 3 Part (e)',
+    xlab = 'x',
+    ylab = 'y',
+    breaks = 50,
+    col = 'hotpink', 
+    las = 1
+)
+
+# superimpose the best-fitting normal density curve
+curve(
+    dnorm(
+        x,
+        mean.calc,
+        sd.calc
+    ),
+    col = 'black',
+    lwd = 5,
+    lty = 'solid',
+    add = TRUE
+)
+```
+
+
+
+\newpage
+
+End of problem 3
+
+\newpage
+
+
+
+
+# Problem 4: Grocery Store Sales
+
+Let's return to our grocery store example.
+
+Recall that these were the prices per box for each brand of breakfast cereal:
+
+| Brand | Price |
+|:-----:|:-----:|
+|  SBZ  |  2.99 |
+|  KYM  |  3.49 |
+|  HKT  |  7.99 |
+
+Here we have a sequence of transactions:
+
+| Transaction | Brand | Number of Boxes |
+|:-----------:|:-----:|:---------------:|
+|      1      |  KYM  |        2        |
+|      2      |  SBZ  |        4        |
+|      3      |  SBZ  |        3        |
+|      4      |  HKT  |        1        |
+|      5      |  SBZ  |        3        |
+|      6      |  KYM  |        2        |
+|      7      |  SBZ  |        5        |
+
+Our goal in this problem is to calculate the total amount in sales for Sugar Bomz (SBZ).
+
+## Part (a)
+
+Store the data on the brand information and the number of boxes sold into vectors. Also construct a lookup vector based on the pricing table.
+
+There's nothing to report here, but write your code clearly so the TAs can understand what you're doing.
+
+**Solution**
+
+```{r}
+# Store the data on the brand information and the number of boxes sold into a vector
+brand.names.vector <- c(
+    'KYM', 'SBZ', 'SBZ', 'HKT', 'SBZ', 'KYM', 'SBZ'
+)
+
+boxes.sold.vector <- c(
+    2, 4, 3, 1, 3, 2, 5
+)
+
+# construct a lookup vector based on the pricing table.
+brand.price.lookup.vector <- c(
+    'SBZ' = 2.99, 
+    'KYM' = 3.49, 
+    'HKT' = 7.99
+)
+```
+
+
+
+## Part (b)
+
+Use the pricing lookup vector from part (a) to convert the brand vector into a vector of prices per box. Display this vector of prices per box directly.
+
+**Solution**
+
+```{r}
+price.per.box.vector <- brand.price.lookup.vector[brand.names.vector]
+
+price.per.box.vector
+```
+
+
+
+## Part (c)
+
+Use a vectorized operation with the number of boxes sold vector from part (a) and the price per box vector from part (b) to construct a vector consisting of the sales amount for each transaction. Display this vector of sales amounts for each transaction directly.
+
+**Solution**
+
+```{r}
+# boxes.sold and price.per.box for sales amount for each transaction
+sales.per.transaction <- boxes.sold.vector * price.per.box.vector
+
+sales.per.transaction
+```
+
+
+
+## Part (d)
+
+In this lecture, we saw how to use values in one vector to select values from another vector.
+
+In this part, we're going to use the values in the brand vector from part (a) to select values from the total sales amount vector we constructed in part (c).
+
+In particular, use logical indexing to select the values in the total sales amount vector from part (c) corresponding to a Sugar Bomz (SBZ) sale.
+
+Display this vector of total Sugar Bomz sales amounts directly.
+
+**Solution**
+
+```{r}
+sbz.sales.vector <- sales.per.transaction[brand.names.vector == 'SBZ']
+sbz.sales.vector
+```
+
+
+
+## Part (e)
+
+Calculate the sum of the vector of total Sugar Bomz sales amounts. Report your result using a `cat()` statement, displaying this value to 2 decimal places.
+
+**Solution**
+
+```{r}
+cat(
+    'SBZs total sales amount is: $',
+    formatC(
+        sum(sbz.sales.vector),
+        format = 'f',
+        digits = 2
+    ),
+    sep = ''
+)
+```
+
+
+
+
+
+\newpage
+
+End of problem 4
+
+\newpage
+
+
+
+# Problem 5: Two-Tone Stripchart
+
+We can use logical indexing techniques to create an informative data visualization that I call a "two-tone" stripchart.
+
+The idea of a two-tone stripchart is that we have a threshold value, and we want to emphasize or highlight the values that are greater than this threshold value.
+
+For this problem, we will use a threshold value of 200:
+```{r}
+threshold <- 200
+```
+
+The data for this problem is contained in the vector `exercise.5.data`.
+
+## Part (a): Low-pass filtering
+
+Use logical indexing to select all the values in `exercise.5.data` that are less than or equal to the threshold value. Store these values in a variable, and report the first 5 elements using a `cat()` statement, displaying these values using 2 decimal places.
+
+When we select values that are less than or equal to a cutoff value, this is called "low-pass filtering", because we are removing high values from the data but allowing the low values to pass through.
+
+**Solution**
+
+```{r}
+# select all the values in `problem.5.data` that are less than or equal to the threshold 
+low.pass.filter.vector <- problem.5.data[problem.5.data <= threshold]
+
+# report the first 5 elements using a `cat()` statement
+cat(
+    "The first 5 low values are:",
+    formatC(
+        head(low.pass.filter.vector, n=5),
+        format = 'f',
+        digits = 2
+    ),
+    sep = ', '
+)
+```
+
+
+
+## Part (b): High-pass filtering
+
+Use logical indexing to select all the values in `exercise.5.data` that are strictly greater than the threshold value. Store these values in a variable, and report the first 4 elements using a `cat()` statement, displaying these values using 2 decimal places.
+
+When we select values that are strictly greater than a cutoff value, this is called "high-pass filtering", because we are removing low values from the data but allowing the high values to pass through.
+
+**Solution**
+
+```{r}
+# select all the values in `problem.5.data` that are less than or equal to the threshold 
+high.pass.filter.vector <- problem.5.data[problem.5.data > threshold]
+
+# report the first 5 elements using a `cat()` statement
+cat(
+    "The first 5 low values are:",
+    formatC(
+        head(high.pass.filter.vector, n=5),
+        format = 'f',
+        digits = 2
+    ),
+    sep = ', '
+)
+```
+
+
+
+## Part (c): Two-tone stripchart
+
+Now we're going to construct a stripchart for this data, where the data below the threshold is displayed using one color and the data above the threshold above the threshold is displayed using a different color.
+
+* First, use the low values from part (a) to construct a stripchart, including titles and using jitter. You should explicitly select the point shape, size, and color. Finally, specify the range of the $x$-values to be from 0 to 400.
+
+* Next, we're going to add another stripchart to this graph. Construct another stripchart, this time using the high values from part (b). You don't have to specify the titles or the range of the $x$ values, because those have already been determined. You *do* have to use jitter for these points, and explicitly specify the shape, size, and color of these points. Use a different color from what you used for the low values. Finally, include `add = TRUE`, just like with the `curve()` function.
+
+* Finally, draw a vertical line with an $x$-value equal to the threshold.
+
+All of these graphing actions have to occur within the same code chunk.
+
+If you do this properly, you should end up with a stripchart where all the points below the threshold value have one color, and all the points above the threshold value have another color, and we can easily see the threshold value because it's represented by the vertical line.
+
+**Solution**
+
+```{r}
+# First, use the low values from part (a) to construct a stripchart
+stripchart(
+    low.pass.filter.vector,
+    xlim = c(0, 400),
+    ylim = c(0, 2),
+    main = 'Problem 5 Stripchart',
+    xlab = 'x',
+    ylab = 'y',
+    las = 1,
+    # explicitly select the point shape, size, and color
+    pch = 20,
+    cex = 1,
+    col = 'lavender',
+    method = 'jitter',
+    jitter = 0.5
+)
+
+# add another stripchart for the high values
+stripchart(
+    high.pass.filter.vector,
+    # explicitly select the point shape, size, and color
+    pch = 20,
+    cex = 1,
+    col = 'hotpink',
+    method = 'jitter',
+    jitter = 0.5,
+    add = TRUE
+)
+
+# Finally, draw a vertical line with an $x$-value equal to the threshold
+segments(
+    x0 = threshold,
+    y0 = 0.1,
+    x1 = threshold,
+    y1 = 1.9,
+    lwd = 2,
+    lty = 2,
+    col = 'black'
+)
+```
+
+
+
+\newpage
+
+End of problem 5
+
+\newpage
+
+
+
+
+# Problem 6: Final Grades
+
+We finally have the tools to calculate a final course score, given the raw scores. In this problem, we'll go from the initial raw scores all the way to the final course score, using R techniques from every lecture so far.
+
+Five students have these final raw scores:
+
+| Status        | Problem Sets | Midterm | Comprehensive Assessment |
+|:--------------|:------------:|:-------:|:------------------------:|
+| Graduate      |      53      |    74   |            74            |
+| Undergraduate |      59      |    65   |            58            |
+| Graduate      |      58      |    76   |            74            |
+| Graduate      |      55      |    66   |            72            |
+| Undergraduate |      59      |    57   |            61            |
+
+Remember that 62 points on the problem sets is equivalent to a standardized score of 100.
+
+
+
+
+## Part (a): Preliminary Score 1
+
+Using vectorized operations, calculate the Preliminary Score 1 for all 5 students. Report this vector using a `cat()` statement, displaying these values with 2 decimal places.
+
+**Solution**
+
+```{r}
+credit.status.vector <- c(
+    'Graduate', 'Undergraduate', 'Graduate', 'Graduate', 'Undergraduate'
+)
+
+problem.set.grades.vector <- c(
+    53, 59, 58, 55, 59
+)
+
+midterm.grades.vector <- c(
+    74, 65, 76, 66, 57
+)
+
+comp.exam.vector <- c(
+    74, 58, 74, 72, 61
+)
+
+# Standardize scores
+pset.standardized <- problem.set.grades.vector / 0.62
+midterm.standardized <- midterm.grades.vector / 0.80
+comp.standardized <- comp.exam.vector / 0.80
+
+# Prelim score 1 calculation
+prelim.score.1 <- 
+    (0.20 * pset.standardized ) + (0.30 * midterm.standardized) + (0.50 * comp.standardized)
+
+# Report w 2 digits
+cat(
+    "The Prelim. 1 Scores are:",
+    formatC(
+        prelim.score.1,
+        format = 'f',
+        digits = 2
+    ),
+    sep = ', '
+)
+```
+
+
+
+## Part (b): Preliminary Score 2
+
+Using vectorized operations, calculate the Preliminary Score 2 for all 5 students. Report this vector using a `cat()` statement, displaying these values with 2 decimal places.
+
+**Solution**
+
+```{r}
+prelim.score.2 <-
+    (0.35 * midterm.standardized) + (0.65 * comp.standardized)
+
+# Report w 2 digits
+cat(
+    "The Prelim. 2 Scores are:",
+    formatC(
+        prelim.score.2,
+        format = 'f',
+        digits = 2
+    ),
+    sep = ', '
+)
+```
+
+
+
+## Part (c): Graduate Final Course Score
+
+Recall that the graduate final course score is calculated as the maximum of the Preliminary Scores 1 and 2.
+
+Using the vectors of preliminary scores that you created in parts (a) and (b), construct a vector of the graduate final course scores for the five students. You'll have to figure out how to take the maximum of the two scores for each student, but here are two suggestions:
+
+* You could write a `for` loop.
+
+* You could use the `ifelse()` function.
+
+It's up to you.
+
+Report this vector of graduate course scores using a `cat()` statement, displaying these values with 2 decimal places.
+
+**Solution**
+
+```{r}
+grad.score.vector <- numeric(length(prelim.score.1))
+
+for (i in 1:length(grad.score.vector)) {
+    grad.score.vector[i] <- max(prelim.score.1[i], prelim.score.2[i])
+}
+
+# Report w 2 digits
+cat(
+    "The Graduate Scores are:",
+    formatC(
+        grad.score.vector,
+        format = 'f',
+        digits = 2
+    ),
+    sep = ', '
+)
+```
+
+
+
+## Part (d): Scaling factor
+
+Recall that I multiply the graduate course by a scaling factor, depending on the student's registration status:
+
+| Status        | Scaling Factor |
+|:--------------|:--------------:|
+| Graduate      |        1       |
+| Undergraduate |       4/3      |
+
+Create a lookup vector for this scaling factor. Then use this lookup vector to convert the registration status to a numeric vector of scaling factors. Report this vector of scaling factors using a `cat()` statement, displaying the values with 2 decimal places.
+
+**Solution**
+
+```{r}
+credit.status.lookup.vector <- c(
+    'Graduate' = 1,
+    'Undergraduate' = 4/3
+)
+
+scaling.factor <- credit.status.lookup.vector[credit.status.vector]
+
+# Report w 2 digits
+cat(
+    "The scaling factor for each student is:",
+    formatC(
+        scaling.factor,
+        format = 'f',
+        digits = 2
+    ),
+    sep = ', '
+)
+```
+
+
+
+## Part (e): Final course score
+
+Using a vectorized operation, multiply the values in the vector of graduate course scores from part (c) by the vector of scaling factors from part (d). This will be a vector consisting of the final course scores. Report this vector using a `cat()` statement, displaying the values with 2 decimal places.
+
+**Solution**
+
+```{r}
+final.score.vector <- grad.score.vector * scaling.factor[credit.status.vector]
+
+# Report w 2 digits
+cat(
+    "The final scores are:",
+    formatC(
+        final.score.vector,
+        format = 'f',
+        digits = 2
+    ),
+    sep = ', '
+)
+```
+
+
+
+\newpage
+
+End of Problem 6
+
+\newpage
+
+
+
+
+# Problem 7: Lissajous Curves
+
+A "Lissajous curve" is another beautiful type of curve that is defined by parametric equation for *x* and *y*, just as we saw for the Lemniscate of Bernoulli.
+
+If you search for "Lissajous curve" in your favorite search engine you'll find many Internet references.
+
+The Wikipedia entry is very thorough, and writes out the parametric equations right at the beginning of the article.
+
+There are many different Lissajous curves, which depend on three parameters $\delta$, $a$, and $b$.
+
+The parameteric equation for the $x$ coordinate is:
+$$
+x(t)\ =\ \sin(at + \delta),\ \ \ \ 0 \leq t \leq 2\pi
+$$
+
+The parameteric equation for the $x$ coordinate is:
+$$
+x(t)\ =\ \sin(bt)\ \ \ \ 0 \leq t \leq 2\pi
+$$
+
+The Wikipedia article has a number of figures of Lissajous curves for various different choices of parameter values, and if you search a little you'll find diagrams of all the curves that we draw in this problem.
+
+
+
+## Part (a): Simple Lissajous curve
+
+Let's graph a Lissajous curve!
+
+We'll start with a very simple one, where $\delta = 0$, $a = 1$ and $b = 2$.
+
+That means that the parametric equation for the $x$-coordinate is:
+$$
+x( t )\ =\ \sin( t )\ \ \ \ 0 \leq t \leq 2\pi
+$$
+
+The parametric equation for the $y$-coordinate is:
+$$
+yx( t )\ =\ \sin( 2t )\ \ \ \ 0 \leq t \leq 2\pi
+$$
+
+First, create a vector of parameter values from 0 to $2\pi$ using the `seq()` function.
+
+Next, create an empty plotting region with no data, and make sure your graph is square.
+
+Then plot this simple Lissajous figure.
+
+**Solution**
+
+```{r}
+delta = 0
+a = 1
+b = 2
+
+# First, create a vector of parameter values from 0 to 2pi using the `seq()` function.
+parameter.values.vector <- 
+    seq(
+        from = 0,
+        to = 2 * pi,
+        length.out = 1000
+    )
+
+x.vector <- sin(parameter.values.vector)
+y.vector <- sin(2 * parameter.values.vector)
+
+# Next, create an empty plotting region with no data, and make sure your graph is square
+par(pty = 's')
+
+plot(
+    x = NULL,
+    xlim = c(-1, 1),
+    ylim = c(-1, 1),
+    main = "Problem 7",
+    xlab = 'x',
+    ylab = 'y'
+)
+
+# Then plot this simple Lissajous figure
+lines(
+    x = x.vector,
+    y = y.vector,
+    lwd = 5,
+    col = 'hotpink'
+)
+```
+
+
+
+## Part (b): Another Lissajous curve
+
+Now let's graph another Lissajous curve.
+
+Now we'll use the parameters $\delta = \pi/2$, $a = 3$, and $b = 4$.
+
+That means that the parametric equation for the $x$-coordinate is:
+$$
+x( t )\ =\ \sin \left ( 3t + \frac{\pi}{2} \right )\ \ \ \ 0 \leq t \leq 2\pi
+$$
+
+The parametric equation for the $y$-coordinate is:
+$$
+y( t )\ =\ \sin( 4t )\ \ \ \ 0 \leq t \leq 2\pi
+$$
+
+To draw this graph:
+
+* Create an empty plot with no data, and use a square plot.
+
+* Construct a vector of parameter values from 0 to $2\pi$.
+
+* Graph the Lissajous curve using the `lines()` function.
+
+You are welcome and encouraged to copy the code that you wrote in part (a) and modify it.
+
+**Solution**
+
+```{r}
+# First, create a vector of parameter values from 0 to 2pi using the `seq()` function.
+parameter.values.vector <- 
+    seq(
+        from = 0,
+        to = 2 * pi,
+        length.out = 1000
+    )
+
+x.vector <- sin(3 * parameter.values.vector)
+y.vector <- sin(4 * parameter.values.vector)
+
+# Next, create an empty plotting region with no data, and make sure your graph is square
+par(pty = 's')
+
+plot(
+    x = NULL,
+    xlim = c(-1, 1),
+    ylim = c(-1, 1),
+    main = "Problem 7",
+    xlab = 'x',
+    ylab = 'y'
+)
+
+# Then plot this simple Lissajous figure
+lines(
+    x = x.vector,
+    y = y.vector,
+    lwd = 5,
+    col = 'hotpink'
+)
+```
+
+
+
+## Part (c): One more Lissajous curve
+
+Now draw the curve with parameters $\delta = \pi/4$, $a = 5$, and $b = 4$.
+
+Construct the graphing display just like before.
+
+You're on your own for the parametric equations!
+
+**Solution**
+
+```{r}
+# First, create a vector of parameter values from 0 to 2pi using the `seq()` function.
+parameter.values.vector <- 
+    seq(
+        from = 0,
+        to = 2 * pi,
+        length.out = 1000
+    )
+
+x.vector <- sin(5 * parameter.values.vector)
+y.vector <- sin(6 * parameter.values.vector)
+
+# Next, create an empty plotting region with no data, and make sure your graph is square
+par(pty = 's')
+
+plot(
+    x = NULL,
+    xlim = c(-1, 1),
+    ylim = c(-1, 1),
+    main = "Problem 7",
+    xlab = 'x',
+    ylab = 'y'
+)
+
+# Then plot this simple Lissajous figure
+lines(
+    x = x.vector,
+    y = y.vector,
+    lwd = 5,
+    col = 'hotpink'
+)
+```
+
+
+
+
+
+
+

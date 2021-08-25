@@ -1,0 +1,1432 @@
+---
+title: "Problem Set 4"
+subtitle: 'CSCI 5a: Programming in R'
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+---
+
+Let's clear the environment:
+```{r}
+rm( list = ls() )
+```
+
+Now let's load in the R objects for this problem set:
+```{r}
+load( "Problem Set 4 R Objects.Rdata" )
+
+ls()
+```
+
+
+
+# Problem 1: Newton's Method
+
+
+In Unit 2, we reviewed the theory of quadratic polynomials, which are polynomials of this form:
+$$
+f(x)\ =\ ax^2 + bx + c
+$$
+
+Now we're going to see another way to solve this equation, known as *Newton's method*.
+
+The basic idea of Newton's method is that we start with an initial guess for the root of the equation with the understanding that this is only an approximation to the correct answer.
+
+Then we take this initial guess, denoted $x_1$, and transform it into a new value, denoted $x_2$, by using a special formula.
+
+What makes the formula special is that the new value is a better approximation to the root than the first guess.
+
+That's a pretty amazing formula!
+
+For a quadratic polynomial, the special formula is:
+$$
+x_2\ =\ \frac{ a \cdot x_1^2 - c}{2 a \cdot x_1 + b}
+$$
+
+What's even more amazing is that we can then use the special formula once again with our second, improved approximation, and that will give us an even better approximation to the root:
+$$
+x_3\ =\ \frac{ a \cdot x_2^2 - c}{2 a \cdot x_2 + b}
+$$
+
+
+We can then repeat that process once again to obtain an even better approximation.
+
+In general, we have:
+$$
+x_{i+1}\ =\ \frac{ a \cdot x_i^2 - c}{2 a \cdot x_i + b}
+$$
+
+So we're repetitively using the output of one computation as the input to the next computation.
+
+Each time we use the formula, we get a better approximation to the root.
+
+The derivation of the special formula involves some advanced mathematics that is not really the concern of CSCI S-5a, so we're not going to worry about how to derive it.
+
+What's important to understand is how the method works: we're always feeding the result of one computation back into the formula to get a better estimate.
+
+If we run this process for a number of times, we'll end up with a very good numerical approximation to the root.
+
+Those formulas might look a little complicated, and it looks like this method is going to require a lot of computation.
+
+On the other hand, the process is highly repetitive, so we can automate it with a `for()` loop.
+
+In this problem, we're going to study the polynomial:
+$$
+f(x)\ =\ -2x^2 + 28x - 90
+$$
+
+
+## Part (a): Create variables
+
+Create variables to represent the coefficients of this quadratic polynomial.
+
+There's nothing to report here, but write your code clearly so the TAs can understand what you're doing.
+
+**Solution**
+
+```{r}
+a.value = -2
+b.value = 28
+c.value = -90
+```
+
+
+
+## Part (b): Roots
+
+Calculate all the roots of this quadratic polynomial. Report each root using a separate `cat()` statement, displaying the value with 5 decimal places.
+
+**Solution**
+
+```{r}
+# Classic roots formula: x = -b + sqrt(b^2 - 4*a*c) / (2*a)
+#                        x = -b - sqrt(b^2 - 4*a*c) / (2*a)
+
+first.root <- (-b.value + sqrt( b.value^2 - (4 * a.value * c.value))) / (2 * a.value)
+second.root <- (-b.value - sqrt( b.value^2 - (4 * a.value * c.value))) / (2 * a.value)
+
+cat(
+    "The first root is:",
+    formatC(
+        first.root,
+        format = 'f',
+        digits = 5
+    ),
+    '\n'
+)
+
+cat(
+    "The second root is:",
+    formatC(
+        second.root,
+        format = 'f',
+        digits = 5
+    )
+)
+```
+
+
+
+## Part (c): Second approximation
+
+Now we're going to use Newton's method to approximate the first root of the polynomial.
+
+We'll start with an initial estimate of 4 for this root.
+
+Now use the initial estimate as the input for the special formula to obtain a better estimate of the first root, and store this back into the current estimate variable. Report the value of this second approximation using a `cat()` statement, displaying the value with 5 decimal places.
+
+Make sure you use 5 decimal places, because we're trying to study this numerical process in detail.
+
+**Solution**
+
+```{r}
+# Formula: x_2 = { a * x_1^2 - c } / {2 * x_1 + b}
+# First approximation value (given)
+x.1 = 4
+
+x.2 <- (a.value * x.1^2 - c.value) / ((2 * a.value) * x.1 + b.value)
+    
+cat(
+    "The second approximation of the first root is:",
+    formatC(
+        x.2,
+        format = 'f',
+        digits = 5
+    )
+)
+```
+
+
+
+## Part (d): Third approximation
+
+Now use the result of part (b) as the input for the special formula to obtain a better estimate of the root, and store this back into the current estimate variable. Report the value of this third approximation using a `cat()` statement, displaying the value with 5 decimal places.
+
+Make sure you use 5 decimal places, because we're trying to study this numerical process in detail.
+
+**Solution**
+
+```{r}
+# Add one to the current value of the x.1 approximation
+x.3 <- (a.value * x.2^2 - c.value) / ((2 * a.value) * x.2 + b.value)
+    
+cat(
+    "The third approximation of the first root is:",
+    formatC(
+        x.3,
+        format = 'f',
+        digits = 5
+    )
+)
+```
+
+
+
+
+## Part (e): Fourth approximation
+
+Now use the result of part (b) as the input for the special formula to obtain a better estimate of the root, and store this back into the current estimate variable. Report the value of this third approximation using a `cat()` statement, displaying the value with 5 decimal places.
+
+Make sure you use 5 decimal places, because we're trying to study this numerical process in detail.
+
+**Solution**
+
+```{r}
+# Set x.1 to the value of x given in part b (5.00000)
+x.4 <- (a.value * x.3^2 - c.value) / ((2 * a.value) * x.3 + b.value)
+    
+cat(
+    "The fourth approximation of the first root is:",
+    formatC(
+        x.4,
+        format = 'f',
+        digits = 5
+    )
+)
+```
+
+
+
+## Part (f): Second root
+
+Now we're going to calculate the second root, but this time we'll automate the process.
+
+We'll start with an initial estimate of 12, and we'll use 5 repetitions of the special formula.
+
+Construct a `for()` loop that repeatedly applies the special formula to the current estimate to produce a better estimate, feeding this value back into formula in the next iteration.
+
+Create a numbered list which prints out a short `cat()` statement displaying the value of the current estimate at the beginning of the loop, before applying the special formula. Use 5 decimal places for the numerical value.
+
+When you're all done, print out the final value of the current estimate using a `cat()` statement displaying the value with 5 decimal places.
+
+**Solution**
+
+```{r}
+# Start with an initial estimate of 12 (given) and 5 repetitions
+x.1 <- 12
+    
+for ( i in 1:5 ) {
+  
+  cat(
+    'The current estimate is: ',
+    formatC(
+      x.1,
+      format = 'f',
+      digits = 5
+    ),
+    '\n'
+  )
+  
+    x.1 = (a.value * x.1^2 - c.value) / ((2 * a.value) * x.1 + b.value)
+    
+}
+
+cat(
+    "The final estimate for the second root is:",
+    formatC(
+        x.1,
+        format = 'f',
+        digits = 5
+    )
+)
+```
+
+
+
+\newpage
+
+End of problem 1
+
+\newpage
+
+
+
+# Problem 2: Histogram
+
+Construct a histogram for the values in the vector `problem.2.data`. Be sure to include a main title and titles for the $x$-axis and $y$-axis. Specify the color of the bars, and explicitly indicate that the number of breaks should be 50.
+
+**Solution**
+
+```{r}
+hist(
+  problem.2.data,
+  main = "Problem 2 Part(a)",
+  xlab = 'x',
+  ylab = 'y',
+  col = 'dodgerblue3',
+  breaks = 50,
+  las = 1
+)
+```
+
+
+
+\newpage
+
+End of problem 2
+
+\newpage
+
+
+
+# Problem 3: Sales Report
+
+WiDgT offers five different models:
+
+| Model           | Price |
+|:----------------|------:|
+| Classic WiDgT   |  4.99 |
+| WiDgT 2.0       |  5.99 |
+| WiDgT 3k        |  8.99 |
+| Quadcore WiDgT  | 10.99 |
+| WiDgT Mach 5    | 12.99 |
+
+Here is data for five sales, listing the widget model and the number of widgets sold.
+
+| Transaction |     Model     | Number of Items |
+|:-----------:|:--------------|:---------------:|
+|     4171    | WiDgT 2.0     |        50       |
+|     1683    | WiDgT Mach 5  |        65       |
+|     7719    | WiDgT 3k      |        10       |
+|     5684    | Classic WiDgT |        25       |
+|     9125    | WiDgT 3k      |        40       |
+
+When you loaded the R objects at the beginning of this problem set, they included three vectors for this problem:
+
+* The vector `problem.3.transaction.id.vector` contains the transaction ids for each of the five transactions.
+
+* The vector `problem.3.widget.model.vector` contains the widget model name for each of the five transactions.
+
+* The `problem.3.number.of.items.sold.vector` contains the number of items sold in the transaction.
+
+
+Your job is to create a sales report for these five sales. Your report should include:
+
+* The transaction ID.
+
+* The widget model name.
+
+* The price per item.
+
+* The number of items sold.
+
+* The total sales amount of the transaction.
+
+Finally, report the total amount of all the sales.
+
+For this problem, you should use the vectors that were loaded in. You'll have to determine how to convert the widget model name to a price, and how to calculate the total sales amount of each transaction. You should use a `for` loop to automate the overall process. Report all results using `cat()` statements, displaying each value with 2 decimal places.
+
+You're on your own for this one -- you'll have to figure out how to design and implement this. You might find it useful to use some vectorized operations, but you must use a `for` loop to automate the report generation. Get creative with simple applications of newline characters and tab characters to supply some basic formatting for your report.
+
+Other than that, we just want to see a nice final report. 
+
+**Solution**
+
+```{r}
+# Declare all vectors and variables 
+sale.total <- 0 
+running.total <- 0
+
+price.lookup.vector <- c(
+  "Classic" = 4.99,
+  "Widget 2.0" = 5.99,
+  "Widget 3k" = 8.99,
+  "Quadcore Widget" = 10.99,
+  "Widget Mach 5" = 12.99
+)
+
+# Opted for using the provided vectors instead of declaring new vectors manually
+#problem.3.widget.model.vector
+#problem.3.transaction.id.vector
+#problem.3.number.of.items.sold.vector
+
+# Iterate through each transaction and provide the:
+# transaction ID, widget model / price, # of items sold, total price per sale, and net revenue 
+for ( i in 1:5 ) {
+  item.price <- price.lookup.vector[problem.3.widget.model.vector[i]]
+  
+  items.sold <- problem.3.number.of.items.sold.vector[i]
+  
+  sale.total <- item.price * items.sold
+  
+  running.total <- running.total + sale.total
+  
+  cat(
+    "Transaction ID: ",
+    problem.3.transaction.id.vector[i],
+    '\n'
+  )
+  
+  cat(
+    "Widget Model: ",
+    problem.3.widget.model.vector[i],
+    '\n'
+  )
+  
+  cat(
+    "Widget Price: ",
+    item.price,
+    '\n'
+  )
+  
+  cat(
+    "Units Sold: ",
+    problem.3.number.of.items.sold.vector[i],
+    '\n'
+  )
+  
+  cat(
+    "Sale Total: $",
+    sale.total,
+    '\n',
+    '\n'
+  )
+}
+
+cat(
+  "Final Sales Revenue: $",
+  formatC(
+    running.total,
+    format = 'f',
+    digits = 2
+  )
+)
+```
+
+
+
+\newpage
+
+End of problem 3
+
+\newpage
+
+
+
+
+
+# Problem 4: Loan Amortization
+
+In this problem, we'll use iteration to calculate two loan amortization problems.
+
+First, we want you to show us that you can construct an amortization schedule by hand, and that's parts (a) through (d).
+
+Then we'll look at another problem which would require a lot of work to calculate by hand, and we'll automate this computation by using iteration.
+
+
+## Part (a): Payment Amount
+
+Marie takes out a loan for \$2,000, and pays it back in three annual installments. The interest rate for the loan is 3.5\%.
+
+Calculate the payment amount for Marie's annual payments so that she pays the loan off completely at the end of 3 years. Save this value in a variable, and report your result using a `cat()` statement, displaying this value with 2 decimal places.
+
+**Solution**
+
+```{r}
+# Declare variables
+principal = 2000
+interest = 0.035
+payments = 3
+
+# Discount factor 
+df = 1 / (1 + interest)
+
+annual.payment = (principal * interest) / (1 - df^payments)
+
+cat(
+  "The annual payment is: $",
+  formatC(
+    annual.payment,
+    format = 'f',
+    digits = 2
+  )
+)
+```
+
+
+
+## Part (b): First year
+
+For year 1, determine:
+
+* The loan balance at the beginning of the year
+
+* The loan balance at the end of the year, before Marie makes a payment.
+
+* The loan balance at the end of the year, after Marie makes a payment.
+
+Report each value using a separate `cat()` statement, displaying the value using 2 decimal places.
+
+**Solution**
+
+```{r}
+# The loan balance at the beginning of the year, 
+beginning.of.year.balance = principal
+
+cat(
+  "YEAR 1:\n",
+  "Loan balance at the beginning of Y1 is: $",
+  formatC(
+    beginning.of.year.balance,
+    format = 'f',
+    digits = 2
+  ),
+  '\n'
+)
+
+# The loan balance at the end of the year, before Marie makes a payment
+end.of.year.balance.before = beginning.of.year.balance * (1 + interest)
+
+cat(
+  "End of year balance, before the annual payment is: $",
+  formatC(
+    end.of.year.balance.before,
+    format = 'f',
+    digits = 2
+  ),
+  '\n'
+)
+
+# The loan balance at the end of the year, after Marie makes a payment
+end.of.year.balance.after = end.of.year.balance.before - annual.payment
+
+cat(
+  "End of year balance, after the annual payment is: $",
+  formatC(
+    end.of.year.balance.after,
+    format = 'f',
+    digits = 2
+  ),
+  '\n'
+)
+```
+
+
+## Part (c): Second year
+
+For year 2, determine:
+
+* The loan balance at the beginning of the year
+
+* The loan balance at the end of the year, before Marie makes a payment.
+
+* The loan balance at the end of the year, after Marie makes a payment.
+
+Report each value using a separate `cat()` statement, displaying the value using 2 decimal places.
+
+**Solution**
+
+```{r}
+beginning.of.year.balance = end.of.year.balance.after
+
+cat(
+  "YEAR 2:\n",
+  "Loan balance at the beginning of Y1 is: $",
+  formatC(
+    beginning.of.year.balance,
+    format = 'f',
+    digits = 2
+  ),
+  '\n'
+)
+
+# The loan balance at the end of the year, before Marie makes a payment
+end.of.year.balance.before = beginning.of.year.balance * (1 + interest)
+
+cat(
+  "End of year balance, before the annual payment is: $",
+  formatC(
+    end.of.year.balance.before,
+    format = 'f',
+    digits = 2
+  ),
+  '\n'
+)
+
+# The loan balance at the end of the year, after Marie makes a payment
+end.of.year.balance.after = end.of.year.balance.before - annual.payment
+
+cat(
+  "End of year balance, after the annual payment is: $",
+  formatC(
+    end.of.year.balance.after,
+    format = 'f',
+    digits = 2
+  ),
+  '\n'
+)
+```
+
+
+
+## Part (d): Third year
+
+For year 3, determine:
+
+* The loan balance at the beginning of the year
+
+* The loan balance at the end of the year, before Marie makes a payment.
+
+* The loan balance at the end of the year, after Marie makes a payment.
+
+Report each value using a separate `cat()` statement, displaying the value using 2 decimal places.
+
+**Solution**
+
+```{r}
+beginning.of.year.balance = end.of.year.balance.after
+
+cat(
+  "YEAR 3: \n",
+  "Loan balance at the beginning of Y1 is: $",
+  formatC(
+    beginning.of.year.balance,
+    format = 'f',
+    digits = 2
+  ),
+  '\n'
+)
+
+# The loan balance at the end of the year, before Marie makes a payment
+end.of.year.balance.before = beginning.of.year.balance * (1 + interest)
+
+cat(
+  "End of year balance, before the annual payment is: $",
+  formatC(
+    end.of.year.balance.before,
+    format = 'f',
+    digits = 2
+  ),
+  '\n'
+)
+
+# The loan balance at the end of the year, after Marie makes a payment
+end.of.year.balance.after = end.of.year.balance.before - annual.payment
+
+cat(
+  "End of year balance, after the annual payment is: $",
+  formatC(
+    end.of.year.balance.after,
+    format = 'f',
+    digits = 2
+  ),
+  '\n'
+)
+```
+
+
+
+## Part (e): Automating the calculation
+
+Now we'll take on a more challenging problem, and solve by automating the computations using iteration.
+
+Taylor takes out a loan for $200,000, to be paid back in 10 annual installments. The interest rate for the loan is 2.8\%.
+
+Construct a report that displays the loan amortization schedule for all 10 years. For each year, your report should include:
+
+* The loan balance at the beginning of the year.
+
+* The loan balance at the end of the year, before Taylor makes a payment.
+
+* The loan balance at the end of the year, after Taylor makes a payment.
+
+Do *not* calculate all of these values by hand -- you won't receive credit if you do. Instead, set up a `for` loop that will automate this process. 
+
+Try to use some simple applications of newline characters and tab characters to supply some basic formatting for your report.
+
+Since the loan is for 10 years, the `for` loop will have 10 iterations, but that's all that I'll say. Otherwise, you're on your own for this one.
+
+Here's a suggestion: in Module 4, we worked on an example in lecture, and another example in the exercise. If you write your code properly, you should be able to change the values of a few variables and everything will work properly. So write your code, and try it out on the worked examples. If you can get it to work with them, then you should have little difficulty with this problem.
+
+**Solution**
+
+```{r}
+# Declare variables 
+principal = 200000
+payments = 10
+interest = 0.028
+
+df = 1 / (1 + interest)
+
+annual.payment = (principal * interest) / (1 - df^payments)
+
+beginning.of.year.balance = principal
+
+# Iterate
+for (i in 1:10) {
+  cat(
+    "YEAR-", i, ':\n', sep = ''
+  )
+  
+  cat(
+    "Loan balance at the beginning of the year is: $",
+    formatC(
+      beginning.of.year.balance,
+      format = 'f',
+      digits = 2
+    ),
+    '\n'
+  )
+  
+  # The loan balance at the end of the year, before payment
+  end.of.year.balance.before = beginning.of.year.balance * (1 + interest)
+  
+  cat(
+    "End of year balance, BEFORE the annual payment is: $",
+    formatC(
+      end.of.year.balance.before,
+      format = 'f',
+      digits = 2
+    ),
+    '\n'
+  )
+  
+  # The loan balance at the end of the year, after Marie makes a payment
+  end.of.year.balance.after = end.of.year.balance.before - annual.payment
+  
+  cat(
+    "End of year balance, AFTER the annual payment is: $",
+    formatC(
+      end.of.year.balance.after,
+      format = 'f',
+      digits = 2
+    ),
+    '\n',
+    '\n'
+  )
+  
+  beginning.of.year.balance = end.of.year.balance.after
+}
+```
+
+
+
+\newpage
+
+End of problem 4
+
+\newpage
+
+
+
+# Problem 5: Moving Average
+
+
+The vector `problem.5.stock.price.raw.data.vector` contains closing stock prices for Krispee Yummm!! stock.
+
+## Part (a): Determining the number of trading days
+
+Determine how many trading days are represented by this data. Report your result using a `cat()` statement, displaying the value with 0 decimal places.
+
+**Solution**
+
+```{r}
+trading.days = length(problem.5.stock.price.raw.data.vector)
+
+cat(
+  "# of trading days:",
+  formatC(
+    trading.days,
+    format = 'f',
+    digits = 0
+  )
+)
+```
+
+
+
+## Part (b): Creating the trading days index vector
+
+Using your result in part (a), construct the vector of trading day indices.
+
+Report the first 5 elements of this vector using a `cat()` statement, displaying each value with 0 decimal places.
+
+**Solution**
+
+```{r}
+trading.days.index.vector <- 1:trading.days
+
+cat(
+  "Trading days index vector:",
+  formatC(
+    head(trading.days.index.vector, n = 5),
+    format = 'f',
+    digits = 0
+  ),
+  sep = ', '
+)
+```
+
+
+
+## Part (c): Constructing the vector of smoothed values
+
+Now we'll construct a vector consisting of the smoothed values for these stock prices.
+
+* First, allocate storage for the smoothed values vector using the value you calculated in part (a).
+
+* Next, populate the first element of the smoothed values vector with the raw stock price value for the first day.
+
+* Then construct a `for` loop that will automate the process of calculating moving averages for the stock price.
+
+* Finally, populate the last element of the smoothed values vector with the raw stock price value for the last day.
+
+When you're all done, report the first 5 elements of the smoothed values vector using a `cat()` statement, displaying each value with 2 decimal places.
+
+**Solution**
+
+```{r}
+smoothed.values.vector = numeric( trading.days )
+
+# populate first element of smoothed values vector with raw stock price value for day 1
+smoothed.values.vector[1] <- problem.5.stock.price.raw.data.vector[1]
+
+# iterate to calculate the moving average of the stock price
+for ( trading.days.index.vector in 2:(trading.days - 1)) {
+  smoothed.values.vector[ trading.days.index.vector] <- 
+    ( problem.5.stock.price.raw.data.vector[ trading.days.index.vector - 1 ] +
+       problem.5.stock.price.raw.data.vector[ trading.days.index.vector ] +
+       problem.5.stock.price.raw.data.vector[ trading.days.index.vector + 1 ] ) / 3
+}
+
+# populate the last element of the smoothed values vector with the raw stock price value for the last day
+smoothed.values.vector[ trading.days ] <- problem.5.stock.price.raw.data.vector[ trading.days]
+
+# display first 5 elements of the smoothed values
+cat(
+  formatC(
+    head(smoothed.values.vector, n = 5),
+    format = 'f',
+    digits = 2
+  ),
+  sep = ', ' 
+)
+
+trading.days.index.vector <- 1:trading.days
+```
+
+
+
+## Part (d): Constructing the line graph
+
+Construct a line graph with the raw stock data and the smoothed moving average values. Be sure to specify the range of the *x*- and *y*-axes, and include a main title, titles for the *x* and *y*-axes, and a legend.
+
+Hint: we strongly recommend that the values on the *y* axis range from 0 to 150.
+
+**Solution**
+
+```{r}
+plot(
+  x = NULL,
+  xlim = c(1, trading.days),
+  ylim = c(0, 150),
+  xlab = 'x',
+  ylab = 'y',
+  main = 'Line Graph for Problem 5 Part(d)',
+  las = 1
+)
+
+# Plot lines for raw stock data and smoothed moving average
+lines(
+  x = trading.days.index.vector,
+  y = smoothed.values.vector,
+  lty = "solid",
+  col = "hotpink",
+  lwd = 2
+)
+
+lines(
+  x = trading.days.index.vector,
+  y = problem.5.stock.price.raw.data.vector,
+  lty = "solid",
+  col = "dodgerblue",
+  lwd = 2,
+)
+
+points(
+  x = trading.days.index.vector,
+  y = problem.5.stock.price.raw.data.vector,
+  pch = 15,
+  lwd = 2,
+  col = "dodgerblue"
+)
+
+points(
+  x = trading.days.index.vector,
+  y = smoothed.values.vector,
+  pch = 5,
+  lwd = 2, 
+  col = "hotpink"
+)
+
+legend(
+  x = 0,
+  y = 145,
+  legend = c("Raw", "Smoothed"),
+  col = c("dodgerblue", "hotpink"),
+  pch = 15,
+)
+```
+
+
+
+\newpage
+
+End of problem 5
+
+\newpage
+
+
+
+# Problem 6: Invalid Values Reporter
+
+In the last lecture, we saw how to use lookup vectors to repair invalid values in data.
+
+This is an important practical skill, but it would also be nice to have a report of all the invalid values that are observed in our data so that they can be investigated.
+
+## Prelude: The `setdiff()` function
+
+For this problem, we're going to learn a new function called `setdiff()`.
+
+In this part, I'll give you all the background that you need for the problem.
+
+The `set.diff()` function takes two input arguments that are vectors, denoted *A* and *B*, and returns a vector consisting of all the elements of *A* that are **not** elements of *B*.
+
+You might need a moment to unpack that definition.
+
+Just remember: if a value is contained in *A* and it's also contained in *B*, then `setdiff()` will **not** return that value.
+
+The vectors don't have to be coordinated or have any special relationship; `setdiff()` treats the input arguments as just sets or collections of objects without any order.
+
+There's nothing to report for this section
+
+Let's see an example of this:
+
+Let *A* be a vector consisting of the values from 1 to 5 in increments of 1:
+```{r}
+A <- 1:5
+
+A
+```
+
+Let *B* be a vector consisting of the values from 1 to 3 in increments of 1.
+```{r}
+B <- 1:3
+
+B
+```
+
+What is `setdiff(A, B)`?
+
+Remember that *A* consists of the values 1 to 5.
+
+The numbers 1, 2, and 3 are all contained in *B*, so these values are **not** in `setdiff(A, B)`.
+
+The numbers 4 and 5 are *not* contained in *B*, so these values **are** in `setdiff(A, B)`.
+
+Let's try this out:
+```{r}
+setdiff(A, B)
+```
+
+OK, let's get started.
+
+
+## Part (a): Obtaining the unique values.
+
+In this problem, data on widget sales is recorded in two vectors:
+
+* The vector `problem.6.model.names.vector` contains the name of the widget model in the transaction.
+
+* The vector `problem.6.number.of.items.vector` contains the number of items sold in the transaction.
+
+Construct a vector consisting of a set of unique representatives for the values in `problem.6.model.names.vector`. (The preceding sentence contains a subtle hint for the name of the function to use.) Save this vector of unique representatives in a variable, and report it using a `cat()` statement, displaying each value with 2 decimal places.
+
+There are a lot of elements of this vector, and you'll need to be sure that this `cat()` statement doesn't run off the page, so you'll need to use the `fill = TRUE` option. Review Section 5: Reporting Vectors in Lecture 3 Module 1: Vector Basics for information about this option.
+
+**Solution**
+
+```{r}
+# Create a vector of all the unique names in the data set
+unique.model.names.vector <- unique(problem.6.model.names.vector)
+
+cat(
+  "The unique model names are:\n",
+  formatC(
+    unique.model.names.vector,
+    format = 'f'
+  ),
+  fill = TRUE
+)
+```
+
+
+
+## Part (b): Valid model names vector
+
+Construct a vector consisting of the valid names for the widget models. That is, there are 5 different models of widget, so you should construct a vector with 5 elements, each of which is the correct version of one of the models. Report your result with a `cat()` statement.
+
+**Solution**
+
+```{r}
+valid.names <- c(
+  "WiDgT Mach 5",
+  "Classic WiDgT", 
+  "WiDgT 3k",
+  "WiDgT 2.0", 
+  "Quadcore WiDgT"
+)
+
+cat(
+  "The valid model names are:\n",
+  formatC(
+    valid.names
+  )
+)
+```
+
+
+
+## Part (c): Selecting the invalid model names
+
+In this part, we want to construct a vector consisting of the *invalid* model names.
+
+That is, we want to construct a vector consisting of the model names that occur in our data, but are not valid model names.
+
+In other words, we want to construct a vector consisting of the values that occur in the vector of unique representatives that do **not** occur in the value of valid widget model names.
+
+Use the `setdiff()` function along with the vectors you created in parts (a) and (b) to construct a vector consisting of unique representatives of the invalid model names that occur in `problem.7.model.names.vector`. Save this vector in a variable, and report the first 5 values using a `cat()` statement.
+
+**Solution**
+
+```{r}
+# Use setdiff() with the previously created vectors
+invalid.names <- c(
+  setdiff( unique.model.names.vector, valid.names )
+)
+
+# Report first 5 values and fill 
+cat(
+  "The invalid model names are:\n",
+  formatC(
+    head(invalid.names, n = 5)
+  ),
+  fill = TRUE
+)
+```
+
+
+
+## Part (d): Invalid name reporter
+
+Use a `for` loop to write a short report enumerating each of the invalid values in `problem.6.model.names.vector`. Remember, to "enumerate" the invalid values you should use a separate `cat()` statement for each invalid value, and the statements should be numbered as "1. ", "2. ", and so on.
+
+**Solution**
+
+```{r}
+for (i in 1:length(invalid.names)) {
+  cat(
+    i, '. ',
+    invalid.names[i],
+    '\n',
+    sep = ''
+  )
+}
+```
+
+
+
+## Part (e): Total sales amount
+
+What is the total sales amount for this set of transactions? Repair the invalid model names and then calculate the total sales amount. You can are encouraged to use the price lookup vector that you constructed in Problem 3 to convert valid model names to their price. Report the total sales amount with a `cat()` statement, displaying each value with 2 decimal places.
+
+**Solution**
+
+```{r}
+# Create a repair lookup vector using the invalid values from above
+repair.lookup.vector <- c(
+  'Widget Mach 5' = "WiDgT Mach 5",
+  'Classic' = "Classic WiDgT",
+  'Widget 3k' = "WiDgT 3k",
+  'Classsic' = "Classic WiDgT",
+  'Widget 2.0' = "WiDgT 2.0",
+  'Quadcore Widget' = "Quadcore WiDgT",
+  'Widget 5' = "WiDgT Mach 5",
+  'Classic Widget' = "Classic WiDgT",
+  'Widget Mach5' = "WiDgT Mach 5",
+  'Widget Mch 5' = "WiDgT Mach 5",
+  'Widget 2' = "WiDgT 2.0",
+  'Widget 3000' = "WiDgT 3k"
+)
+
+model.price.lookup.vector <- c(
+  "Classic WiDgT" = 4.99,
+  "WiDgT 2.0" = 5.99,
+  "WiDgT 3k" = 8.99,
+  "Quadcore WiDgT" = 10.99,
+  "WiDgT Mach 5" = 12.99
+)
+
+repaired.names.vector <- repair.lookup.vector[problem.6.model.names.vector]
+
+# convert valid model names to their price
+model.price.vector <- model.price.lookup.vector [ repaired.names.vector ]
+
+total.sales = sum(model.price.vector * problem.6.number.of.items.vector)
+
+# Report the total sales amount with a `cat()` statement and 2 digits
+cat(
+  "The total sales amount is: $",
+  formatC(
+    total.sales,
+    format = 'f',
+    big.mark = ',',
+    digits = 2
+  )
+)
+```
+
+
+
+\newpage
+
+End of problem 6
+
+\newpage
+
+
+
+
+# Problem 7: Rose Curves
+
+In Problem Set 3, we saw how to construct the Lemniscate of Bernoulli by using vectorized methods.
+
+The idea was to construct a vector of parameter values using the `seq()` function, and then use vectorized operations on this vector to obtain vectors of $x$- and $y$-coordinates.
+
+The curve could then be plotted using the `lines()` function.
+
+In this problem, we'll explore another such parametric curve, called a *rose* curve.
+
+
+## Part (a): Creating a plotting display
+
+Construct a completely blank plotting region, with the $x$-axis ranging from -1 to 1 and the $y$-axis also ranging from -1 to 1.
+
+Also, make the plotting display square.
+
+Finally, draw in horizontal reference lines $y = 0$ and $x = 0$; notice that these reference lines will now bisect the plotting region.
+
+For this part, just construct this plotting region; we'll use this as the foundation for our other graphs.
+
+**Solution**
+
+```{r}
+par(pty = 's')
+
+plot(
+  x = NULL,
+  xlim = c(-1, 1),
+  ylim = c(-1, 1),
+  xlab = '',
+  ylab= '',
+  axes = FALSE,
+  main = "Problem 7, Part (a)"
+)
+
+# Horizontal reference line
+segments(
+  x0 = -1,
+  y0 = 0,
+  x1 = 1,
+  y1 = 0,
+  lty = "solid",
+  col = "darkgrey",
+  lwd = 2
+)
+
+# Vertical reference line
+segments(
+  x0 = 0,
+  y0 = -1,
+  x1 = 0,
+  y1 = 1,
+  lty = "solid",
+  col = "darkgrey",
+  lwd = 2
+)
+```
+
+
+
+## Part (b): Drawing a rose curve
+
+Now we'll draw a rose curve.
+
+The parametric equation for the $x$-coordinate of a rose curve is:
+$$
+x( \theta )\ =\ \cos( k \theta ) \cdot \cos( \theta )
+$$
+
+This only works if $k$ is a rational number i.e.\ it has to be a ratio of two whole numbers.
+
+In this part, we'll graph the equation where $k = 3$.
+
+* First, use the `seq()` function to construct a sequence of 1,000 values from 0 to $\pi$.
+
+* Next, compute a vector of $x$-coordinates using the formula:
+$$
+x( \theta )\ =\ \cos( 3 \theta ) \cdot \cos( \theta )
+$$
+
+* Similarly, compute a vector of $y$-coordinates using the formula:
+$$
+x( \theta )\ =\ \cos( 3 \theta ) \cdot \sin( \theta )
+$$
+
+
+Copy the code you developed in part (a), and then draw the curve using the `lines()` function
+
+**Solution**
+
+```{r}
+# use the `seq()` function to construct a sequence of 1,000 values from 0 to
+theta = seq(from = 0, to = pi, length.out = 1000)
+
+# vector of x coordinates: x( theta ) = cos( 3 theta ) * cos( theta )
+x.coord = cos(3 * theta) * cos(theta)
+
+# vector of y coordinates: x( theta ) = cos( 3 theta ) * sin( theta )
+y.coord = cos(3 * theta) * sin(theta) 
+
+# Copied code from part (a)
+par(pty = 's')
+
+plot(
+  x = NULL,
+  xlim = c(-1, 1),
+  ylim = c(-1, 1),
+  xlab = '',
+  ylab= '',
+  axes = FALSE,
+  main = "Problem 7, Part (b)"
+)
+
+# Horizontal reference line
+segments(
+  x0 = -1,
+  y0 = 0,
+  x1 = 1,
+  y1 = 0,
+  lty = "solid",
+  col = "darkgrey",
+  lwd = 2
+)
+
+# Vertical reference line
+segments(
+  x0 = 0,
+  y0 = -1,
+  x1 = 0,
+  y1 = 1,
+  lty = "solid",
+  col = "darkgrey",
+  lwd = 2
+)
+
+# Draw curve using lines function 
+lines(
+  x.coord,
+  y.coord,
+  lty = 'solid',
+  col = 'pink',
+  lwd = 6
+)
+```
+
+
+
+## Part (c): Drawing a rose curve
+
+Now we'll draw another rose curve.
+
+In this part, we'll graph the equation where $k = 4/3$.
+
+The parametric equation for the $x$-coordinate is:
+$$
+x( \theta )\ =\ \cos \left ( \frac{4}{3} \cdot \theta \right ) \cdot \cos( \theta )
+$$
+
+The parametric equation for the $y$-coordinate is:
+$$
+x( \theta )\ =\ \cos \left ( \frac{4}{3} \cdot \theta \right ) \cdot \sin( \theta )
+$$
+
+For this curve, the parameter values should range from 0 to $6\pi$.
+
+
+You're welcome and encouraged to copy your code from part (b) and modify it.
+
+If you wrote your code in part (b) well, you should be able to do this problem with very little effort.
+
+**Solution**
+
+```{r}
+# use the `seq()` function to construct a sequence of 1,000 values from 0 to
+theta = seq(from = 0, to = (6 * pi), length.out = 1000)
+
+# vector of x coordinates: x( theta ) = cos( 3 theta ) * cos( theta )
+x.coord = cos(4/3 * theta) * cos(theta)
+
+# vector of y coordinates: x( theta ) = cos( 3 theta ) * sin( theta )
+y.coord = cos(4/3 * theta) * sin(theta) 
+
+# Copied code from part (a)
+par(pty = 's')
+
+plot(
+  x = NULL,
+  xlim = c(-1, 1),
+  ylim = c(-1, 1),
+  xlab = '',
+  ylab= '',
+  axes = FALSE,
+  main = "Problem 7, Part (b)"
+)
+
+# Horizontal reference line
+segments(
+  x0 = -1,
+  y0 = 0,
+  x1 = 1,
+  y1 = 0,
+  lty = "solid",
+  col = "darkgrey",
+  lwd = 2
+)
+
+# Vertical reference line
+segments(
+  x0 = 0,
+  y0 = -1,
+  x1 = 0,
+  y1 = 1,
+  lty = "solid",
+  col = "darkgrey",
+  lwd = 2
+)
+
+# Draw curve using lines function 
+lines(
+  x.coord,
+  y.coord,
+  lty = 'solid',
+  col = 'pink',
+  lwd = 6
+)
+```
+
+
+
+## Part (d): Drawing a rose curve
+
+Now we'll draw another rose curve.
+
+In this part, we'll graph the equation where $k = 3/7$.
+
+The parametric equation for the $x$-coordinate is:
+$$
+x( \theta )\ =\ \cos \left ( \frac{3}{7} \cdot \theta \right ) \cdot \cos( \theta )
+$$
+
+The parametric equation for the $y$-coordinate is:
+$$
+x( \theta )\ =\ \cos \left ( \frac{3}{7} \cdot \theta \right ) \cdot \sin( \theta )
+$$
+
+For this curve, the parameter values should range from 0 to $7\pi$.
+
+
+You're welcome and encouraged to copy your code from part (b) and modify it.
+
+If you wrote your code in part (b) well, you should be able to do this problem with very little effort.
+
+**Solution**
+
+```{r}
+# use the `seq()` function to construct a sequence of 1,000 values from 0 to
+theta = seq(from = 0, to = (7 * pi), length.out = 1000)
+
+# vector of x coordinates: x( theta ) = cos( 3 theta ) * cos( theta )
+x.coord = cos(3/7 * theta) * cos(theta)
+
+# vector of y coordinates: x( theta ) = cos( 3 theta ) * sin( theta )
+y.coord = cos(3/7 * theta) * sin(theta) 
+
+# Copied code from part (a)
+par(pty = 's')
+
+plot(
+  x = NULL,
+  xlim = c(-1, 1),
+  ylim = c(-1, 1),
+  xlab = '',
+  ylab= '',
+  axes = FALSE,
+  main = "Problem 7, Part (b)"
+)
+
+# Horizontal reference line
+segments(
+  x0 = -1,
+  y0 = 0,
+  x1 = 1,
+  y1 = 0,
+  lty = "solid",
+  col = "darkgrey",
+  lwd = 2
+)
+
+# Vertical reference line
+segments(
+  x0 = 0,
+  y0 = -1,
+  x1 = 0,
+  y1 = 1,
+  lty = "solid",
+  col = "darkgrey",
+  lwd = 2
+)
+
+# Draw curve using lines function 
+lines(
+  x.coord,
+  y.coord,
+  lty = 'solid',
+  col = 'pink',
+  lwd = 6
+)
+```
+
+

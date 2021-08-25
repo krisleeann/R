@@ -1,0 +1,1198 @@
+---
+title: "Problem Set 8"
+subtitle: 'CSCI S-5a: Programming in R'
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+---
+
+
+
+# Problem 1: Data Frame Reporter
+
+Throughout this course, we've written what I call "reporter" functions, which take an R object and print out a range of information about its properties. Reporter functions are extremely useful when we first read in a data set, because they can quickly summarize a number of features of the data.
+
+For this problem, you must construct a reporter function for a data frame. The reporter function takes one argument, a data frame, and then prints out a range of information:
+
+* First, it reports the total number of rows and columns in the data frame.
+
+* Then the reporter function prints out information for each column:
+
+    -   First, it prints out the name of the column.
+
+    -   Next, it prints out the class of the column, either `numeric`, `logical`, or `factor`.
+
+    -   If the column is a `numeric` vector, then the reporter function prints out the sample mean, sample standard deviation, sample minimum, and sample maximum.
+
+    -   If the column is a `logical` vector, then the reporter function prints out the proportion of elements that are true.
+
+    -   If the column is a `factor`, then the reporter function prints out the number of levels, as well as the first 3 levels.
+
+    -   Finally, for each column, the reporter function prints out the number of missing items.
+
+
+
+## Part (a): Data frame reporter function
+
+Write a data frame reporter function according the specifications above. Make the output nice by using newlines and tab characters to space out the display. There's nothing to report here, but write you code clearly so the TAs can understand what you're doing.
+
+**Solution**
+
+```{r}
+# write a data frame reporter function
+data.frame.reporter.function <- function( input ) {
+  # reports the total number of rows and columns in the data frame
+  rows = nrow(input)
+  columns = ncol(input)
+
+  col.names.vector <- names(input)
+  
+  cat("# of columns:", columns)
+  cat("\n# of rows:", rows)
+  cat('\n--------------------------------')
+  
+  # print the name of each column 
+  for (col.name in col.names.vector) {
+    col <- input[[col.name]]
+    cat("\n\nColumn name:", col.name)
+    
+    # print the class of the column
+    col.class <- class(col)
+    cat("\nColumn class:", col.class)
+    
+    # If `numeric`, print the mean, standard deviation, minimum, and maximum
+    if (is.numeric(col)) {
+      cat("\n\tSample mean:",
+          round(
+            mean(col, na.rm = TRUE), 2)
+          )  
+      
+      cat("\n\tStandard deviation:",
+          round(
+            sd(col, na.rm = TRUE), 2)
+          ) 
+      
+      cat("\n\tSample min.:",
+          round(
+            min(col, na.rm = TRUE), 2)
+          ) 
+      
+      cat("\n\tSample max.:",
+          round(
+            max(col, na.rm = TRUE), 2)
+          ) 
+    } else if (is.logical(col)) {
+      # If `logical`, print the proportion of elements that are true
+      cat("\n\t'TRUE' proportion:",
+          mean(col, na.rm = TRUE))
+    } else {
+      # If `factor`, print the number of levels, as well as the first 3 levels
+      level.count <- levels(col)
+      
+      cat("\n\t# of levels:", length(level.count))
+      
+      for(i in 1:3) {
+        cat("\n\t\t", 
+            level.count[i],
+            '\n',
+            sep = '')
+      }
+    }
+    
+    # for each column, print the number of missing items
+    cat("\n# of missing items:",
+        sum(is.na(col)),
+        '\n\n--------------------------------')
+    
+  }
+}
+```
+
+
+
+
+## Part (b): Testing the data frame reporter
+
+Read in the data from the file "Problem 1 Data.csv" located in the "Problem Set 8 Data" folder and run your data frame reporter on it.
+
+**Solution**
+
+```{r}
+data.frame.test <-
+  read.csv(
+    "../Problem Set 8 Data/Problem 1 Data.csv",
+    stringsAsFactors = TRUE
+  )
+
+data.frame.reporter.function(data.frame.test)
+```
+
+
+
+\newpage
+
+End of problem 1
+
+\newpage
+
+
+
+
+
+# Problem 2: Find Your Own Dataset
+
+This problem is essentially the entire point of the course.
+
+In this problem, we want you to find your own dataset to study and practice with.
+
+Your dataset should be in .csv or tab-delimited text form.
+
+Find something that interests you. As always, you'll get a lot more out of the exercise if you engage with it, and if you care about the subject matter that makes it easier for you to maintain energy.
+
+## Part (a): Dataset description
+
+Tell us a little bit about your dataset. Write a few sentences to give us some background information about the subject. Also, tell us where you got the dataset from. When you're all done, read in the data file and store the resulting data frame in a variable.
+
+**Solution**
+
+My dataset follows a robot that is attempting to navigate around a room (in a clockwise manner) using ultrasound, and is given four attempts. This dataset is from 'https://www.kaggle.com/uciml/wall-following-robot' and isn't particularly easy to navigate, but I figured it'd be worth a shot! 
+
+```{r}
+robotics.data.frame <- read.csv(
+  file = "../Robotics Data/sensor_readings_2.csv"
+)
+```
+
+
+
+## Part (b): Number of rows
+
+How many rows does your dataset have? Determine this using R, and report your result with one sentence.
+
+**Solution**
+
+```{r}
+num.rows <- nrow(robotics.data.frame)
+
+num.rows
+```
+
+
+
+## Part (c): Number of variables
+
+How many variables does your dataset have? Determine this using R, and report your result with one sentence.
+
+**Solution**
+
+```{r}
+num.variables <- names(robotics.data.frame)
+
+cat("# of variables and their headers:", num.variables, sep = ', ')
+```
+
+
+
+## Part (d): `NA` values
+
+Are there any `NA` values in your dataset? Tell us with one or two sentences.
+
+**Solution**
+
+```{r}
+na.values <- sum(is.na(robotics.data.frame))
+
+na.values
+```
+
+No, this dataset does not have any NA values.
+
+
+
+## Part (e): Ask a question
+
+Pose an interesting question about your subject matter, and then use the data in your data frame to answer this question. You should calculate some sort of numerical value such as a sample mean or a sample proportion, and report this to us. Also, you should make some sort of visualization, although the precise graph is up to you.
+
+What's important is that the numerical result and the visualization should be relevant to answering your question.
+
+Hint: it's probably easier to find a good quality dataset, and then think of a question that you can answer with the data, rather than to think of the question first and then try to dig up some data to answer it.
+
+You'll get full credit as long as you do *something*, and the TAs won't grade you based on the content of your analysis. However, I think you'll get more out of this exercise if you dig in and engage with it. Once again, we come back to: find something that you care about, and then you'll find it interesting to do the analysis.
+
+Remember: all I can do is to demonstrate the tools, and show you some basic applications. Ultimately, it's up to you to integrate this knowledge into your practice, and only you can do this.
+
+Finally, do a nice job, and present your results in a finished manner. Amaze and delight the TAs with your imagination, creativity, precision, and attention to detail.
+
+**Solution**
+
+My question is, how many times was each occurrence/path of movement taken (sharp right turn, move forward, or other), and which sensor (right or left) tracked more readings; which can potentially be used to evaluate an ideal path, ensure the sensors are working properly, or any other reason. I'd just like to know that to see if I can have an estimate of how the robot moved throughout the room.
+
+```{r}
+total.moves.values <- robotics.data.frame$Slight.Right.Turn
+
+len = length(total.moves.values)
+
+unique(total.moves.values)
+cat("\n\n")
+
+# display a count of each unique value from the dataset / direction column
+table(total.moves.values)
+cat("\n")
+
+# calculate the proportion of each unique movement 
+move.forward = 2205 / len
+sharp.right = 2097 / len
+slight.left = 328 / len
+slight.right = 825 / len
+
+# calculate some sort of numerical value such as a sample mean
+average.right.sensor <- mean(robotics.data.frame$X1.687)
+average.left.sensor <- mean(robotics.data.frame$X0.445)
+
+cat(
+  "Average ultrasound sensor reading on the RIGHT side:",
+  formatC(
+    average.right.sensor,
+    format = 'f',
+    digits = 4
+  )
+)
+
+cat(
+  "\n\nAverage ultrasound sensor reading on the LEFT side:",
+  formatC(
+    average.left.sensor,
+    format = 'f',
+    digits = 4
+  )
+)
+```
+
+```{r}
+# make some sort of visualization
+slices <- c(move.forward, sharp.right, slight.left, slight.right)
+
+color.vec <- c('lavender', 'lavenderblush', 'lightblue1', 'khaki')
+
+lbls <- c("Move-Forward", "Sharp-Right-Turn", "Slight-Left-Turn", "Slight-Right-Turn")
+
+pie(
+  slices,
+  labels = lbls,
+  clockwise = TRUE,
+  main = "Proportion of Each Direction Pursued by the Robot", 
+  col = color.vec,
+)
+```
+
+
+
+\newpage
+
+End of problem 2
+
+\newpage
+
+
+
+
+
+# Problem 3: Loan Amortization
+
+In CSCI 5a we usually use data frames as a way to store data. But they can also be used to construct tabular displays, and this application is sometimes underappreciated.
+
+In this problem, we're going to use R to display all of the steps involved in constructing a loan amortization schedule.
+
+
+## Part (a): Payment amount
+
+Taylor takes out a loan for \$200,000, to be paid back in 10 annual installments. The interest rate for the loan is 2.8%.
+
+Calculate the annual payment amount that Taylor needs to make in order to fully pay off this loan with 10 annual installments. Report your result using a `cat()` statement, displaying this value with 2 decimal places.
+
+
+**Solution**
+
+```{r}
+principal = 200000
+
+payments = 10
+
+interest.rate = 0.028
+
+df = 1 / (1 + interest.rate)
+
+annual.payment <- interest.rate * principal / 
+  (1 - df^payments)
+
+cat(
+  "Annual payment: $",
+  formatC(
+    annual.payment,
+    format = 'f',
+    digits = 2,
+    big.mark = ','
+  ),
+  sep = ''
+)
+```
+
+
+
+## Part (b): Loan amortization schedule
+
+Construct a report that displays the loan amortization schedule for all 10 years.
+
+To construct this report, first create three storage vectors, each of length 10:
+
+* The first storage vector holds the current loan balance at the start of the year.
+
+* The second storage vector holds the current loan balance at the end of the year, before the payment.
+
+* The third storage vector holds the current loan balance at the end of the year, after the payment.
+
+We've already seen the algorithm for constructing a loan amortization schedule. 
+
+However, for this problem, instead of printing out the values using a `cat()` statement, you should now store the result each individual calculation in one of the storage vectors:
+
+* For year 1:
+
+    -   At the beginning of year 1, the current loan balance is just the initial loan amount. Store this in location 1 of the storage vector for the loan balance at the start of the year.
+
+    -   At the end of year 1 before the payment, the current loan balance has accrued interest. Determine the loan balance at the end of the year before the payment, and store this value in location 1 of the storage vector for the loan balance at the end of the year before the payment.
+
+    -   At the end of year 1 after the payment, the current loan balance has decreased by the payment amount. Determine this value, and store it in location 1 of the storage vector for the loan balance at the end of the year after the payment.
+
+* Now we move on to year 2:
+
+    -   Determine the loan balance at the beginning of the year, and store this value in location 2 of the appropriate storage vector.
+
+    -   Determine the loan balance at the end of the year before the payment, and store this value in location 2 of the appropriate storage vector.
+
+    -   Determine the loan balance at the end of the year after the payment, and store this value in location 2 of the appropriate storage vector.
+
+Continue in this way: calculate each of the three loan balances for year $i$, storing them in location $i$ of the appropriate storage vector.
+
+At the end of this calculation you will have three storage vectors, each of length 10.
+
+When you've finished calculating all the values, combine the three storage vectors into a data frame.
+
+Finally, display the data frame directly.
+
+Remember that you can use any string you like as a name for the data frame columns as long as you enclose the characters in quotes.
+
+
+**Solution**
+
+```{r}
+# first create three storage vectors, each of length 10
+# The first storage vector holds the current loan balance at the start of the year
+start.of.year.balance <- numeric(payments)
+
+# The second holds the current loan balance at the end of the year, before the payment
+end.of.year.before.balance <- numeric(payments)
+
+# The third holds the current loan balance at the end of the year, after the payment
+end.of.year.after.balance <- numeric(payments)
+
+balance <- principal
+
+for (year in 1:payments) {
+  
+  start.of.year.balance[year] <- balance
+  
+  balance <- (1 + interest.rate) * balance
+  
+  end.of.year.before.balance[year] <- balance
+  
+  balance <- balance - annual.payment
+  
+  end.of.year.after.balance[year] <- balance
+}
+
+# combine the three storage vectors into a data frame. Display the data frame directly
+data.frame(
+  
+  "Start of year balance:" =
+  formatC(
+    start.of.year.balance,
+    format = 'f',
+    digits = 2
+  ),
+  
+  "End of year balance (before payment):" =
+  formatC(
+    end.of.year.before.balance,
+    format = 'f',
+    digits = 2
+  ),
+  
+  "End of year balance (after payment):" =
+  formatC(
+    end.of.year.after.balance,
+    format = 'f',
+    digits = 2
+  )
+)
+```
+
+
+
+\newpage
+
+End of problem 3
+
+\newpage
+
+
+
+
+# Problem 4: Scatterplot
+
+Let's examine the relationship between the sepal length and sepal width for plants of the *virginica* species, using the built-in `iris` data frame.
+
+Our first step will be to select exactly the values of `Sepal.Length` and `Sepal.Width` that correspond to the *virginica* species, and then to store these values in vectors.
+
+The next step will be to construct a scatterplot of these filtered values, and then to superimpose a least-squares regression line on the scatterplot.
+
+Finally, we'll report the actual regression coefficients.
+
+## Part (a): Selecting the sepal length values for `virginica`.
+
+Construct a vector consisting of the `Sepal.Length` values for the *virginica* species. Report your final result using a `cat()` statement, displaying the first 6 values of the vector with 2 decimal places.
+
+**Solution**
+
+```{r}
+sepal.lengths <- iris$Sepal.Length[iris$Species == 'virginica']
+
+cat(
+  "Sepal lengths for the Virginica species",
+  formatC(
+    head(sepal.lengths, n = 6),
+    format = 'f',
+    digits = 2
+  )
+)
+```
+
+
+
+## Part (b): Selecting the sepal width values for `virginica`.
+
+Construct a vector consisting of the `Sepal.Width` values for the *virginica* species. Report your final result using a `cat()` statement, display the first 6 values of the vector with 2 decimal places.
+
+**Solution**
+
+```{r}
+sepal.widths <- iris$Sepal.Width[iris$Species == 'virginica']
+
+cat(
+  "Sepal widths for the Virginica species",
+  formatC(
+    head(sepal.widths, n = 6),
+    format = 'f',
+    digits = 2
+  )
+)
+```
+
+
+
+## Part (c): Scatterplot
+
+Construct a scatterplot of the sepal width values against the sepal length values. The sepal length values should be represented by the $x$-coordinate of the points, and the sepal width should be represented by the $y$-coordinate of the points.
+
+**Solution**
+
+```{r}
+plot(
+  x = sepal.lengths,
+  y = sepal.widths,
+  main = "Problem 4, Part(c)",
+  xlab = 'length',
+  ylab = 'width',
+  pch = 15,
+  col = 'hotpink', 
+  las = 1
+)
+```
+
+
+
+## Part (d): Linear model
+
+Construct the linear model for the regression where the sepal length values are represented by the $x$-coordinate and the sepal width values are represented by the $y$-coordinate. When you're done, save your result in a variable, and then print out a summary of the regression results by using the `summary()` function.
+
+Hint: you need just one line of code to construct the linear model. The only real challenge here is determining which variable goes on which side of the regression formula. Pay attention and be careful!
+
+**Solution**
+
+```{r}
+linear.model <-
+    lm(
+        sepal.widths ~
+            sepal.lengths
+    )
+
+summary( linear.model )
+```
+
+
+
+## Part (e): Least-squares regression line
+
+Copy your code for the scatterplot from part (c), and then draw a least-squares regression line on it using the linear model that you constructed in part (d).
+
+**Solution**
+
+```{r}
+plot(
+  x = sepal.lengths,
+  y = sepal.widths,
+  main = "Problem 4, Part(e)",
+  xlab = 'length',
+  ylab = 'width',
+  pch = 15,
+  col = 'hotpink', 
+  las = 1
+)
+
+abline(
+  linear.model,
+  lty = 'dotted',
+  lwd = 5,
+  col = 'purple'
+)
+```
+
+
+
+## Part (f): Slope coefficient
+
+Using the linear model you constructed in part (d), determine the value of the slope of the least-squares regression line and save this value in a variable. Report your result using a `cat()` statement, displaying the value with 5 decimal places.
+
+How does your result compare with the value in the linear regression summary that you printed out at the end of part (d)?
+
+**Solution**
+
+```{r}
+slope.coefficient <- linear.model$coefficients["sepal.lengths"]
+
+cat(
+  "Slope:",
+  formatC(
+    slope.coefficient,
+    format = 'f',
+    digits = 5
+  )
+)
+```
+
+
+
+## Part (g): $y$-intercept coefficient
+
+Using the linear model you constructed in part (d), determine the value of the $y$-intercept of the least-squares regression line and save this result in a variable. Report your result using a `cat()` statement, displaying the value with 5 decimal places.
+
+How does your result compare with the value in the linear regression summary that you printed out at the end of part (d)?
+
+**Solution**
+
+```{r}
+y.intercept <- linear.model$coefficients["(Intercept)"]
+
+cat(
+  "y-intercept:",
+  formatC(
+    y.intercept,
+    format = 'f',
+    digits = 5
+  )
+)
+```
+
+
+
+\newpage
+
+End of problem 4
+
+\newpage
+
+
+
+
+
+# Problem 5: Baseball Data
+
+Whenever we've calculated baseball batting statistics, we've always used the career totals for a player.
+
+For instance, for Babe Ruth, we have:
+
+| Statistics        |  Career Total |
+|:------------------|--------------:|
+| Plate appearances |        10,626 |
+| At-bats           |         8,399 |
+| Hits              |         2,873 |
+| Doubles           |           506 |
+| Triples           |           136 |
+| Home runs         |           714 |
+| Bases on balls    |         2,062 |
+| Hit by a pitch    |            43 |
+| Sacrifice flies   |             0 |
+
+However, this is not how baseball data is typically reported.
+
+Instead, baseball statistics are typically reported on an annual basis.
+
+That is, the data is presented for each year that a player played in the major leagues.
+
+Babe Ruth's first season in the major leagues was 1914, and his last season was 1935, so he played a total of 22 seasons.
+
+Thus, the data for Babe Ruth consists of 22 rows, one for each season.
+
+The CSV file `Babe Ruth Annual Batting Data.csv` is located in the `Problem Set 8 Data` folder, in a subfolder called `Baseball Data`.
+
+The column names for this data use these abbreviations:
+
+| Batting statistic | Abbreviation |
+|:------------------|:-------------|
+| At-Bats           | AB           |
+| Hits              | H            |
+| Doubles           | 2B           |
+| Triples           | 3B           |
+| Home Runs         | HR           |
+| Bases on Balls    | BB           |
+| Hit by a Pitch    | HBP          |
+| Sacrifice Flies   | SF           |
+
+
+## Part (a): Reading in the data
+
+Read in the data from `Babe Ruth Annual Batting Data.csv` and store it in a variable. (You'll have to use a path for this.) There's nothing to report for this part, but write your code clearly so the TAs can understand what you're doing.
+
+**Solution**
+
+```{r}
+babe.ruth.data <- read.csv(
+  file = "../Problem Set 8 Data/Baseball Data/Babe Ruth Annual Batting Data.csv"
+)
+```
+
+
+
+## Part (b): Babe Ruth career hits
+
+Can we use the data in this format to calculate Babe Ruth's career batting average? To do this, we have to know his career total hits and his career total at-bats. In this part, we'll calculate his career total hits.
+
+First, select the vector of hits from the data frame from part (a). Then calculate the sum of the values in this vector,and store it in a variable. Report your result using a `cat()` statement, formatting the value with 0 decimal places.
+
+**Solution**
+
+```{r}
+career.hits <- sum(babe.ruth.data$H)
+
+cat(
+  "Babe Ruth career hits:",
+  formatC(
+    career.hits,
+    format = 'f',
+    digits = 0
+  )
+)
+```
+
+
+
+## Part (b): Babe Ruth career total at-bats
+
+In this part, we'll calculate Babe Ruth's career total at-bats.
+
+First, select the vector of at-bats from the data frame from part (a). Then calculate the sum of the values in this vector,and store it in a variable. Report your result using a `cat()` statement, formatting the value with 0 decimal places.
+
+**Solution**
+
+```{r}
+at.bats <- sum(babe.ruth.data$AB)
+
+cat(
+  "Babe Ruth career at-bats:",
+  formatC(
+    at.bats,
+    format = 'f',
+    digits = 0
+  )
+)
+```
+
+
+
+## Part (d): Babe Ruth career batting average
+
+Use your results from parts (b) and (c) to calculate Babe Ruth's career batting average. Report your result using a `cat()` statement, displaying the value using standard baseball formatting conventions.
+
+**Solution**
+
+```{r}
+batting.average <- career.hits / at.bats
+
+batting.average.char <- formatC(
+  batting.average, 
+  format = 'f',
+  digits = 3
+)
+
+batting.average.formatted <- substr(
+  batting.average.char,
+  start = 2,
+  stop = 5
+)
+
+cat(
+  "Babe Ruth career batting average:",
+  formatC(
+    batting.average.formatted
+  )
+)
+```
+
+
+
+## Part (e): Ted Williams career on-base percentage
+
+A CSV file containing Ted Williams' annual baseball batting data is contained in the file named "Ted Williams Annual Baseball Data.csv", located in the `Data` folder, in a subfolder called `Baseball Data`.
+
+Read in Ted Williams' annual baseball batting data from this file, and store it in a variable. Then use this data to calculate Ted Williams' career on-base percentage. Report your result using a `cat()` statement, displaying the value using standard baseball formatting conventions.
+
+**Solution**
+
+```{r}
+williams.data <- read.csv(
+  file = "../Problem Set 8 Data/Baseball Data/Ted Williams Annual Batting Data.csv"
+)
+
+# Declare variables needed for OBP calc
+career.hits <- sum(williams.data$H)
+
+bob <- sum(williams.data$BB)
+
+hbp <- sum(williams.data$HBP)
+
+abs <- sum(williams.data$AB)
+
+sf <- sum(williams.data$SF)
+
+# Display variable info 
+cat(
+  "Williams' career total hits:",
+  formatC(
+    career.hits,
+    format = 'f',
+    digits = 0
+  )
+)
+
+cat(
+  "\n\nWilliams' career bases on balls:",
+  formatC(
+    bob,
+    format = 'f',
+    digits = 0
+  )
+)
+
+cat(
+  "\n\nWilliams' career hit by a pitch:",
+  formatC(
+    hbp,
+    format = 'f',
+    digits = 0
+  )
+)
+
+cat(
+  "\n\nWilliams' career at bats:",
+  formatC(
+    abs,
+    format = 'f',
+    digits = 0
+  )
+)
+
+cat(
+  "\n\nWilliams' career sacrifice flies:",
+  formatC(
+    sf,
+    format = 'f',
+    digits = 0
+  )
+)
+
+# On base percentage calculation 
+obp <- 
+  (career.hits + bob + hbp) /
+  (abs + bob + hbp + sf)
+
+obp.char <- formatC(
+  obp,
+  format = 'f',
+  digits = 3
+)
+
+obp.formatted <- substr(
+  obp.char,
+  start = 2,
+  stop = 5
+)
+
+cat("\n\n\tWilliams' on base percentage:", obp.formatted)
+```
+
+
+
+## Part (f): Willie Mays career slugging percentage
+
+A CSV file containing Willie Mays' annual baseball batting data is contained in the file named "Willie Mays Annual Baseball Data.csv", located in the `Problem Set 8 Data` folder, in a subfolder called `Baseball Data`.
+
+Read in Willie Mays' annual baseball batting data from this file, and store it in a variable. Then use this data to calculate Willie Mays' career slugging percentage. Report your result using a `cat()` statement, displaying the value using standard baseball formatting conventions.
+
+**Solution**
+
+```{r}
+mays.data <- read.csv(
+  file = "../Problem Set 8 Data/Baseball Data/Willie Mays Annual Batting Data.csv"
+)
+
+# Slugging percentage = total bases / total at bats; declare variables for calculation
+total.hits <- sum(mays.data$H)
+at.bats <- sum(mays.data$AB)
+
+doubles <- sum(mays.data$X2B)
+triples <- sum(mays.data$X3B)
+homeruns <- sum(mays.data$HR)
+singles <- total.hits - (doubles + triples + homeruns)
+
+total.bases <- 
+  (1 * singles) +
+  (2 * doubles) +
+  (3 * triples) +
+  (4 * homeruns)
+
+slugging.percentage <- total.bases / at.bats
+
+slugging.percentage.char <- formatC(
+  slugging.percentage,
+  format = 'f',
+  digits = 3
+)
+
+slugging.percentage.formatted <- substr(
+  slugging.percentage.char, 
+  start = 2,
+  stop = 5
+)
+
+cat(
+  "Willie Mays total hits:",
+  formatC(
+    total.hits,
+    format = 'f',
+    digits = 0
+  )
+)
+
+cat(
+  "\n\nWillie Mays total at bats:",
+  formatC(
+    at.bats,
+    format = 'f',
+    digits = 0
+  )
+)
+
+cat(
+  "\n\nWillie Mays total singles:",
+  formatC(
+    singles,
+    format = 'f',
+    digits = 0
+  )
+)
+
+cat(
+  "\n\nWillie Mays total doubles:",
+  formatC(
+    doubles,
+    format = 'f',
+    digits = 0
+  )
+)
+
+cat(
+  "\n\nWillie Mays total triples:",
+  formatC(
+    triples,
+    format = 'f',
+    digits = 0
+  )
+)
+
+cat(
+  "\n\nWillie Mays total home runs:",
+  formatC(
+    homeruns,
+    format = 'f',
+    digits = 0
+  )
+)
+
+cat("\n\n\tWillie Mays slugging percentage:", slugging.percentage.formatted)
+```
+
+
+
+\newpage
+
+End of Problem 5
+
+\newpage
+
+
+
+
+
+# Problem 6: Final Grades, Encore
+
+You might have noticed that we still haven't fully solved the problem of calculating final grades.
+
+The issue is that I've always told you what the total problem set scores are, but in reality this is the sum of the 10 individual problem set scores.
+
+
+The file `Problem 6 Data.csv` contains data for a class of 80 students:
+
+* Student name
+
+* Registration status
+
+* Scores for each of 10 individual problem sets, numbered from Problem Set 0 to Problem Set 9
+
+* The midterm assessment raw score
+
+* The comprehensive assessment raw score
+
+
+
+To calculate the final letter grade for each student in the class:
+
+* First, add the points for each of the individual problem sets together, and use this sum as the problem set raw score.
+
+* Standardize the problem set raw score so that a raw score of 62 points is transformed to a standardized score of 100 points.
+
+* Standardize the midterm assessment raw score so that a raw score of 80 points is transformed to a standardized score of 100 points.
+
+* Standardize the comprehensive assessment raw score so that a raw score of 80 points is transformed to a standardized score of 100 points.
+
+* Calculate the Preliminary Score 1 and Preliminary Score 2 using the weighted averages we saw in Unit 2, then select the maximum of these two scores as the Graduate Course Score.
+
+* If a student is registered for graduate credit, then the Graduate Course Score is the Final Course Score for that student.
+
+* If a student is registered for undergraduate credit, then the Graduate Course Score is multiplied by a factor of 4/3 to obtain the Final Course Score
+
+Use this table to determine the Course Letter Grade based on the Final Course Score:
+
+| Range                         | Letter Grade |
+|:------------------------------|:------------:|
+| 90 <= Final Course Score      |       A      |
+| 80 <= Final Course Score < 90 |       B      |
+| 70 <= Final Course Score < 80 |       C      |
+| 60 <= Final Course Score < 70 |       D      |
+| Final Course Score < 60       |       F      |
+
+Calculate the final letter grade for each of the students of this class.
+
+You're on your own for this one! You'll have to decide how to implement this, especially how to obtain the total problem set raw scores.
+
+When you're all done you should report:
+
+* The first 8 rows of a data frame consisting of the student name, the final course score, and the final letter grade.
+
+* Directly display a relative proportions table of the letter grades, and then use this table to construct a barplot of the letter grade relative proportions. Remember to include all the required elements of the barplot.
+
+**Solution**
+
+```{r}
+problem.data.frame <- read.csv(
+  file = "../Problem Set 8 Data/Problem 6 Data.csv"
+)
+
+credit.status <- substr(
+  x = problem.data.frame$Registration.status,
+  start = 9,
+  stop = 13
+)
+
+midterm.raw <- problem.data.frame$Midterm.Assessment
+comprehensive.raw <- problem.data.frame$Comprehensive.Assessment
+
+# First, add points for each of the individual problem sets, use this sum as the problem set raw score
+pset.raw.scores <-
+  problem.data.frame$Problem.Set.0 + 
+  problem.data.frame$Problem.Set.1 + 
+  problem.data.frame$Problem.Set.2 + 
+  problem.data.frame$Problem.Set.3 + 
+  problem.data.frame$Problem.Set.4 +
+  problem.data.frame$Problem.Set.5 + 
+  problem.data.frame$Problem.Set.6 + 
+  problem.data.frame$Problem.Set.7 + 
+  problem.data.frame$Problem.Set.8 + 
+  problem.data.frame$Problem.Set.9
+
+pset.data.frame <- problem.data.frame[
+  c("Problem.Set.0",
+  "Problem.Set.1",
+  "Problem.Set.2",
+  "Problem.Set.3",
+  "Problem.Set.4",
+  "Problem.Set.5",
+  "Problem.Set.6",
+  "Problem.Set.7",
+  "Problem.Set.8",
+  "Problem.Set.9")
+]
+
+pset.raw.scores <- rowSums(pset.data.frame)
+
+# Standardize raw scores
+pset.standardized <- pset.raw.scores / 0.62
+midterm.standardized <- midterm.raw / 0.80
+comprehensive.standardized <- comprehensive.raw / 0.80
+
+# Calculate the Preliminary Score 1 and 2, then select the maximum for graduate credit
+prelim.score.1 <- 
+  (0.2 * pset.standardized) + 
+  (0.3 * midterm.standardized) +
+  (0.5 * comprehensive.standardized)
+
+prelm.score.2 <- 
+  (0.35 * midterm.standardized) +
+  (0.65 * comprehensive.standardized)
+
+grad.final.scores <- ifelse(
+  prelim.score.1 > prelm.score.2, 
+  prelim.score.1,
+  prelm.score.2
+)
+
+# If an undergrad, the Graduate Course Score is multiplied by 4/3 to obtain the Final Course Score
+final.scores <- ifelse(
+  credit.status == "Under",
+  4/3 * grad.final.scores,
+  grad.final.scores
+)
+
+# Calculate the final letter grade for each of the students of this class.
+grade.conversions <- cut(
+  final.scores,
+  breaks = c(-Inf, 60, 70, 80, 90, Inf),
+  labels = c('F', 'D', 'C', 'B', 'A'),
+  right = FALSE
+)
+
+grades.table <- table(grade.conversions)
+
+# Report: The first 8 rows of a data frame consisting of the student name, the final course score, and the final letter grade.
+final.grades <- data.frame(
+  name = problem.data.frame$Name,
+  score = final.scores,
+  grade = grade.conversions
+)
+
+# Directly display a relative proportions table of the letter grades
+head(final.grades, n = 8)
+```
+```{r}
+# Then use this table to construct a barplot of the letter grade relative proportions
+barplot(
+  grades.table, 
+  ylim= c(0, 50), 
+  main = "Final Grades", 
+  xlab = 'grades',
+  ylab = 'frequency',
+  col = 'hotpink', 
+  las = 1
+)
+```
+
+
+
+\newpage
+
+End of Problem 6
+
+\newpage
+
+
+
+# Problem 7
+
+In this problem, we have a data set for a clinical trial, stored in the CSV file "Problem 7 Data.csv".
+
+For each subject, an enzyme level was measured at baseline and also at the end of the study.
+
+In this problem, you need to calculate the change score for each patient, which is defined as the final enzyme level minus the baseline enzyme level.
+
+Then you should report the sample mean of the change scores using a `cat()` statement, formatting the value with 3 decimal places.
+
+Also, construct a stripchart of the change scores.
+
+Note: unfortunately, sometimes the enzyme assay doesn't work, in which case a -9 value is recorded in the data, so you'll need to convert these to `NA` values before calculating the change scores.
+
+**Solution**
+
+```{r}
+loaded.data.frame <- read.csv(
+  file = "../Problem Set 8 Data/Problem 7 Data.csv"
+)
+
+# calculate the change score for each patient, which is the final enzyme level - baseline enzyme level
+baseline.level <- loaded.data.frame$baseline
+baseline.level[baseline.level == -9] <- NA
+
+final.level <- loaded.data.frame$final
+final.level[final.level == -9] <- NA
+
+change.level <- final.level - baseline.level
+
+# report the sample mean of the change scores using a `cat()` statement, with 3 decimal places
+cat(
+  "Enzyme sample mean of change scores:",
+  formatC(
+    mean(change.level, na.rm = TRUE),
+    format = 'f',
+    digits = 3
+  )
+)
+```
+
+```{r}
+# construct a stripchart of the change scores
+stripchart(
+  x = change.level,
+  ylim = c(0, 2), 
+  main = "Change level scores",
+  xlab = 'change',
+  col = 'seagreen',
+  pch = 15,
+  method = 'jitter',
+  jitter = 0.8
+)
+```
+
+
+
+
+
+

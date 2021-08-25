@@ -1,0 +1,1858 @@
+---
+title: "Problem Set 2"
+author: 'Kristin Gasca'
+
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+---
+
+
+
+# Problem 1: Baseball Statistics
+
+The great player Willie Mays had these career statistics:
+
+| Statistics        |  Value |
+|:------------------|-------:|
+| Plate appearances | 12,497 |
+| At-bats           | 10,881 |
+| Hits              |  3,283 |
+| Doubles           |    523 |
+| Triples           |    140 |
+| Home Runs         |    660 |
+| Bases on balls    |  1,464 |
+| Hit by a pitch    |     44 |
+| Sacrifice flies   |     91 |
+
+
+## Part (a)
+
+Calculate Willie Mays' batting average. Report your result using a `cat()` statement, displaying this value with 3 decimal places.
+
+**Solution**
+```{r} 
+mays.at.bats <- 10881
+
+mays.hits <- 3283
+mays.doubles <- 523
+mays.triples <- 140
+mays.homeruns <- 660
+
+mays.bob <- 1464
+mays.hbp <- 44
+mays.sf <- 91
+
+mays.average <- mays.hits / mays.at.bats
+
+cat(
+  "Mays' batting average is: ",
+  formatC(
+    mays.average, 
+    format = "f",
+    digits = 3
+  )
+)
+```
+
+
+
+
+## Part (b)
+
+Calculate the number of singles that Mays hit. Report your result using a `cat()` statement.
+
+**Solution**
+
+```{r}
+mays.singles <- 
+  mays.hits - mays.doubles - mays.triples - mays.homeruns
+
+cat(
+  "Mays' total singles count: ",
+  formatC(
+    mays.singles, 
+    format = "f",
+    digits = 3
+  )
+)
+```
+
+
+
+
+## Part (c)
+
+Calculate the total number of outs for Mays. Report your result using a `cat()` statement.
+
+**Solution**
+
+```{r}
+# Lecture states: outs = at bat - hits
+mays.totalhits <- mays.singles + mays.doubles + mays.triples + mays.homeruns
+
+mays.outs <- mays.at.bats - mays.totalhits
+
+cat(
+  "Mays' total number of outs is: ",
+  formatC(
+    mays.outs, 
+    format = "f",
+    digits = 3
+  )
+)
+```
+
+
+
+
+## Part (d)
+
+Calculate the career on-base percentage (OBP) for Mays. Report your result using a `cat()` statement, formatting this value with 3 decimal places.
+
+**Solution**
+```{r}
+mays.obp <- 
+  (mays.hits + mays.bob + mays.hbp) / 
+  (mays.at.bats + mays.bob + mays.hbp + mays.sf)
+
+cat(
+  "Mays' career on-base percentage is: ",
+  formatC(
+    mays.obp, 
+    format = "f",
+    digits = 3
+  )
+)
+```
+
+
+
+
+## Part (e)
+
+Calculate the number of total bases for Mays. Report your result using a `cat()` statement.
+
+**Solution**
+
+```{r}
+mays.totalbases <- 
+  1 * mays.singles +
+  2 * mays.doubles +
+  3 * mays.triples +
+  4 * mays.homeruns
+
+cat(
+  "Mays' total bases is: ",
+  formatC(
+    mays.totalbases, 
+    format = "f",
+    digits = 3
+  )
+)
+```
+
+
+
+
+## Part (f)
+
+Calculate the career slugging percentage (SLG) for Mays. Report your result using a `cat()` statement, formatting this value with 3 decimal places.
+
+**Solution**
+
+```{r}
+mays.slugging <- 
+  mays.totalbases / mays.at.bats
+
+cat(
+  "Mays' career slugging percentage is: ",
+  formatC(
+    mays.slugging, 
+    format = "f",
+    digits = 3
+  )
+)
+```
+
+
+
+
+## Part (g)
+
+Construct a pie chart showing the relative proportions of these values for Willie Mays:
+
+* Singles (1B)
+
+* Doubles (2B)
+
+* Triples (3B)
+
+* Home Runs (HR)
+
+* Bases on Balls (BB)
+
+* Hit by a pitch (HBP)
+
+* Outs
+
+* Everything else
+
+Use clockwise rotation for the pie chart, and be sure to provide a main title.
+
+**Solution**
+
+```{r}
+# I believe the only 'else' category is sacrifice flies 
+mays.else <- mays.sf
+
+slices <- c(mays.singles, mays.doubles, mays.triples, mays.homeruns, mays.bob, mays.hbp, mays.outs, mays.else)
+lbls <- c('1B', '2B', '3B', 'HR', 'BB', 'HBP', 'OUTS', 'ELSE')
+colors.vector <- c('navy', 'pink', 'purple', 'darkgreen', 'yellow', 'red', 'blue', 'orange')
+pie(slices, labels = lbls, clockwise = TRUE, main="Willie Mays' Batting Stats", col=colors.vector)
+```
+
+
+
+
+\newpage
+
+End of problem 1
+
+\newpage
+
+
+
+
+# Problem 2: Calculating Final Grades
+
+
+Ashley is registered for graduate credit, and at the end of term she has these results:
+
+* Total problem set points raw score: 58
+
+* Midterm raw score: 69
+
+* Final comprehensive assessment raw score: 76
+
+
+## Part (a)
+
+Calculate the problem set standardized score for Ashley. Report your result using a `cat()` statement, displaying this value with 2 decimal places.
+
+**Solution**
+
+```{r}
+problem.raw <- 58
+
+problem.standardized <- problem.raw / 0.62
+
+cat(
+  "Ashley's problem set standardized score is: ",
+  formatC(
+    problem.standardized, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+
+## Part (b)
+
+Calculate the midterm exam standardized score for Ashley. Report your result using a `cat()` statement, displaying this value with 2 decimal places.
+
+**Solution**
+
+```{r}
+midterm.raw <- 69
+
+midterm.standardized <- midterm.raw / 0.80
+
+cat(
+  "Ashley's midterm standardized score is: ",
+  formatC(
+    midterm.standardized, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+## Part (c)
+
+Calculate the comprehensive course assessment standardized score for Ashley. Report your result using a `cat()` statement, displaying this value with 2 decimal places.
+
+**Solution**
+
+```{r}
+final.raw <- 76
+
+final.standardized <- final.raw / 0.80
+
+cat(
+  "Ashley's comprehensive standardized score is: ",
+  formatC(
+    final.standardized, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+## Part (d)
+
+Calculate the preliminary score 1 for Ashley, using a weighted average of the problem set, midterm, and comprehensive course assessment standardized scores. Report your result using a `cat()` statement, displaying this value with 2 decimal places.
+
+**Solution**
+
+```{r}
+preliminary.score.1 <- 
+  (0.20 * problem.standardized) +
+  (0.30 * midterm.standardized) +
+  (0.50 * final.standardized)
+
+cat(
+  "Ashley's prelim. score 1 is: ",
+  formatC(
+    preliminary.score.1, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+## Part (e)
+
+Calculate the preliminary score 2 for Ashley, using a weighted average of the midterm and comprehensive course assessment standardized scores. Report your result using a `cat()` statement, displaying this value with 2 decimal places.
+
+**Solution**
+
+```{r}
+preliminary.score.2 <- 
+  (0.35 * midterm.standardized) +
+  (0.65 * final.standardized)
+
+cat(
+  "Ashley's prelim. score 2 is: ",
+  formatC(
+    # Corrected preliminary.score.1 to preliminary.score.2
+    preliminary.score.2, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+## Part (f)
+
+Based on your results from parts (d) and (e), what is Ashley's final graduate course score? Explain your answer using a few sentences.
+
+**Solution**
+
+```{r}
+grad.final.score <- 
+  max(preliminary.score.1, preliminary.score.2)
+
+cat(
+  "Ashley's final grad score is: ",
+  formatC(
+    preliminary.score.1, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+
+## Part (g)
+
+Determine the final course letter grade for Ashley. Explain your answer with a few sentences.
+
+**Solution**
+
+Ashley earned a letter grade of "A-" for the course.
+
+
+
+## Part (h)
+
+Miles has the same raw scores as Ashley does, but is registered for undergraduate credit. Report the undergraduate final course score for Miles using a `cat()` statement, displaying this value to 2 decimal places.
+
+**Solution**
+
+```{r}
+undergrad.final.score <- 4/3 * grad.final.score
+
+cat(
+  "Miles' final undergrad score is: ",
+  formatC(
+    undergrad.final.score, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+## Part (i)
+
+What is Miles' final course letter grade? Explain your answer with a complete sentence.
+
+**Solution**
+
+Miles' final course letter grade is an "A". 
+
+
+
+
+\newpage
+
+End of problem 2
+
+\newpage
+
+
+
+
+
+# Problem 3: Quadratic Functions
+
+## Part (a)
+
+Consider the quadratic function $f(x) = x^2 - 6x + 9$. What is the value of the discriminant for this function? Report your answer using a `cat()` statement, formatting the value to 2 decimal places.
+
+**Solution**
+```{r}
+a <- 1
+b <- -6 
+c <- 9
+
+discriminant <- b^2 - 4 * a * c
+
+cat(
+  "The discriminant is: ",
+  formatC(
+    discriminant, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+## Part (b)
+
+Based on your answer to part (a), how many solutions exist for the equation $f(x) = 0$? Report your answer with one or two sentences.
+
+**Solution**
+
+Exactly one root exists for this quadratic polynomial. We know this because the discriminant satisfies the condition of being equal to 0.00, and evaluating the expression with f(x)=0 leaves a single root of 9. 
+
+
+
+
+## Part (c)
+
+Use the quadratic formula, determine all the roots of the equation $f(x) = 0$. Report each value using a `cat()` statement, formatting the value to 2 decimal places.
+
+**Solution**
+
+```{r}
+first.root <- (-b - sqrt(b^2 - 4 * a* c)) / (2 * a)
+
+cat(
+  "The first and only root is: ",
+  formatC(
+    first.root, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+## Part (d)
+
+Draw a graph of $f(x)$. The $x$-values for the plotting region should range from 0 to 6, and the $y$-values should range from -2 to +8. Include horizontal and vertical reference lines. Draw the curve of $f(x)$, explicitly selecting the line type, width, and color, and then draw in points for any roots of the equation, again explicitly selecting the type, size, and color. Be sure to provide a main title and titles for the $x$-axis and the $y$-axis.
+
+**Solution**
+
+```{r}
+plot(
+  x = NULL,
+  xlim = c(0, 6),
+  ylim = c(-2, 8),
+  main = "Graph for part (d)",
+  xlab = 'x',
+  ylab = 'f(x)',
+  las = 1
+)
+
+# Horizontal reference line
+segments(
+  x0 = -2, 
+  y0 = 0,
+  x1 = 7, 
+  y1 = 0,
+  lty = 'solid',
+  lwd = 2,
+  col = 'gray50'
+)
+
+# Vertical reference line
+segments(
+  x0 = 0, 
+  y0 = -3,
+  x1 = 0, 
+  y1 = 9,
+  lty = 'solid',
+  lwd = 2,
+  col = 'gray50'
+)
+
+curve(
+  expr = (x^2) - (6*x) + 9,
+  lwd = 4, 
+  lty = 'dotted',
+  col = 'hotpink',
+  add = TRUE
+)
+
+# Exactly one root  
+points(
+  x = c(3),
+  y = c(0),
+  col = 'darkorchid3',
+  pch = 17,
+  cex = 2
+)
+```
+
+
+
+
+## Part (e)
+
+Consider the quadratic function $g(x) = x^2 - 10x + 21$. What is the value of the discriminant for this function? Report your answer using a `cat()` statement, formatting the value to 2 decimal places.
+
+**Solution**
+
+```{r}
+a <- 1
+b <- -10 
+c <- 21
+
+discriminant <- b^2 - 4 * a * c
+
+cat(
+  "The discriminant is: ",
+  formatC(
+    discriminant, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+## Part (f)
+
+Based on your answer to part (e), how many solutions exist for the equation $g(x) = 0$? Report your answer with one or two sentences.
+
+**Solution**
+
+The discriminant is strictly greater than 0.00, so there are exactly two roots for this function.
+
+
+
+
+## Part (g)
+
+Use the quadratic formula, determine all the roots of the equation $g(x) = 0$. Report each value using a `cat()` statement, formatting the value to 2 decimal places. If there are no solutions, write a short stating that.
+
+**Solution**
+
+```{r}
+first.root = (-b - sqrt(b^2 - 4*a*c)) / (2 * a)
+# Corrected quadratic formula for second root from - sqrt to + sqrt
+second.root = (-b + sqrt(b^2 - 4*a*c)) / (2 * a)
+
+cat(
+  "The first and second roots are: ",
+  formatC(
+    c(first.root, second.root), 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+## Part (h)
+
+Draw a graph of $g(x)$. The $x$-values for the plotting region should range from 0 to 10, and the $y$-values should range from -5 to +5. Include horizontal and vertical reference lines. Draw the curve of $g(x)$, explicitly selecting the line type, width, and color, and then draw in points for any roots of the equation, again explicitly selecting the type, size, and color. Be sure to provide a main title and titles for the $x$-axis and the $y$-axis.
+
+**Solution**
+
+```{r}
+plot(
+  x = NULL,
+  xlim = c(0, 10),
+  ylim = c(-5, 5),
+  main = "Graph for part (h)",
+  xlab = 'x',
+  ylab = 'g(x)',
+  las = 1
+)
+
+# Horizontal reference line
+segments(
+  x0 = -1, 
+  y0 = 0,
+  x1 = 11, 
+  y1 = 0,
+  lty = 'solid',
+  lwd = 2,
+  col = 'gray50'
+)
+
+# Vertical reference line
+segments(
+  x0 = 0, 
+  y0 = -6,
+  x1 = 0, 
+  y1 = 6,
+  lty = 'solid',
+  lwd = 2,
+  col = 'gray50'
+)
+
+# g(x) = x^2 - 10x + 21
+curve(
+  expr = (x^2) - (10*x) + 21,
+  lwd = 4, 
+  lty = 'dotted',
+  col = 'hotpink',
+  add = TRUE
+)
+
+# Exactly two roots 
+points(
+  x = c(3),
+  y = c(0),
+  col = 'darkorchid3',
+  pch = 19,
+  cex = 2
+)
+
+points(
+  x = c(7),
+  y = c(0),
+  col = 'darkorchid3',
+  pch = 19,
+  cex = 2
+)
+```
+
+
+
+
+## Part (i)
+
+Consider the quadratic function $h(x) = x^2 - 12x + 40$. What is the value of the discriminant for this function? Report your answer using a `cat()` statement, formatting the value to 2 decimal places.
+
+**Solution**
+
+```{r}
+a <- 1
+b <- -12 
+c <- 40
+
+discriminant <- b^2 - 4 * a * c
+
+cat(
+  "The discriminant is: ",
+  formatC(
+    discriminant, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+## Part (j)
+
+Based on your answer to part (a), how many solutions exist for the equation $h(x) = 0$? Report your answer with one or two sentences.
+
+**Solution**
+
+The discriminant is strictly less than 0, so there are no roots.
+
+
+
+
+## Part (k)
+
+Use the quadratic formula, determine all the roots of the equation $h(x) = 0$. Report each value using a `cat()` statement, formatting the value to 2 decimal places.
+
+**Solution**
+
+```{r}
+first.root = (-b - sqrt(b^2 - 4*a*c)) / (2 * a)
+second.root = (b - sqrt(b^2 - 4*a*c)) / (2 * a)
+
+cat(
+  "The first and second roots are: ",
+  formatC(
+    c(first.root, second.root), 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+## Part (l)
+
+Draw a graph of $h(x)$. The $x$-values for the plotting region should range from 0 to 12, and the $y$-values should range from -2 to +20. Include horizontal and vertical reference lines. Draw the curve of $h(x)$, explicitly selecting the line type, width, and color, and then draw in points for any roots of the equation, again explicitly selecting the type, size, and color. Be sure to provide a main title and titles for the $x$-axis and the $y$-axis.
+
+**Solution**
+
+```{r}
+plot(
+  x = NULL,
+  xlim = c(0, 12),
+  ylim = c(-2, 20),
+  main = "Graph of h(x)",
+  xlab = 'x',
+  ylab = 'h(x)',
+  las = 1
+)
+
+# Horizontal reference line
+segments(
+  x0 = -1, 
+  y0 = 0,
+  x1 = 14, 
+  y1 = 0,
+  lty = 'solid',
+  lwd = 2,
+  col = 'gray50'
+)
+
+# Vertical reference line
+segments(
+  x0 = 0, 
+  y0 = -3,
+  x1 = 0, 
+  y1 = 22,
+  lty = 'solid',
+  lwd = 2,
+  col = 'gray50'
+)
+
+# h(x) = x^2 - 12x + 40
+curve(
+  expr = (x^2) - (12*x) + 40,
+  lwd = 4, 
+  lty = 'dotted',
+  col = 'hotpink',
+  add = TRUE
+)
+```
+
+
+
+\newpage
+
+End of problem 3
+
+\newpage
+
+
+
+
+# Problem 4: Grocery Store
+
+A grocery store sells three brands of breakfast cereal:
+
+* Sugar Bomz (SBZ), which costs $2.49 per box.
+
+* Krispee Yummm!! (KYM), which costs $3.99 per box.
+
+* Healthy Kale and Tofu (HKT), which costs $8.99 per box.
+
+The store is currently running a promotional campaign on breakfast cereal by offering a $1 off coupon to customers.
+
+Note that the coupon is applied to the entire order, not to each box of cereal.
+
+On Saturday, the grocery store had six sales:
+
+| Transaction ID | Brand | Number of Boxes | Coupon |
+|:--------------:|:-----:|:---------------:|:-------|
+|        1       |  KYM  |        2        |   No   |
+|        2       |  SBZ  |        4        |   Yes  |
+|        3       |  SBZ  |        6        |   Yes  |
+|        4       |  KYM  |        1        |   No   |
+|        5       |  HKT  |        2        |   Yes  |
+|        6       |  SBZ  |        5        |   Yes  |
+
+To calculate the net revenue for each transaction, multiply the price per box by the number of boxes and subtract the coupon amount (if any).
+
+To calculate the total net revenue, add up the net revenues for all transactions.
+
+Calculate the total net revenue for the cereal sales for Saturday.
+
+Report this total net revenue using a `cat()` statement, formatting this value with 2 decimal places.
+
+By the way, we're doing this problem to experience how tedious the calculation is.
+
+It's annoying with just 6 transactions, but think how bad it would be if we had 10,000 transactions!
+
+One of the goals of CSCI S-5a is develop techniques that will allow us to automate this sort of calculation.
+
+**Solution**
+
+```{r}
+# Price per box 
+kym <- 3.99
+sbz <- 2.49
+hkt <- 8.99
+
+# Net revenue per transaction
+net.revenue.one <- (2 * kym)
+net.revenue.two <- (4 * sbz) - 1
+net.revenue.three <- (6 * sbz) - 1
+net.revenue.four <- (1 * kym) 
+net.revenue.five <- (2 * hkt) - 1
+net.revenue.six <- (5 * sbz) - 1
+
+# Calc. total net revenue
+total.net.revenue <- (net.revenue.one + net.revenue.two + net.revenue.three + net.revenue.four + net.revenue.five + net.revenue.six)
+
+# Shorter solution: 
+# total.net.revenue <- (2 * kym) + ((4 * sbz) - 1) + ((6 * sbz) - 1) + (1 * kym) + ((2 * hkt) - 1) + ((5 * sbz) - 1)
+
+cat(
+  "Saturday's total net revenue was: ",
+  formatC(
+    total.net.revenue, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+\newpage
+
+End of problem 4
+
+\newpage
+
+
+
+
+
+# Problem 5: VWAP
+
+Suppose a stock has five sales in one day:
+
+* First, 1000 shares are sold at a price of \$22.50 per share.
+
+* Next, 200 shares are sold at a price of \$24.00 per share.
+
+* Then 750 shares are sold at a price of \$23.00 per share.
+
+* Then 800 shares are sold at a price of \$24.50 per share.
+
+* Finally, 300 shares are sold at a price of \$24.00 per share.
+
+Let's put this into a table:
+
+| Transaction | Number of shares | Price per share |
+|:-----------:|:----------------:|:---------------:|
+|      1      |      1000        |     \$22.50     |
+|      2      |       200        |     \$24.00     |
+|      3      |       750        |     \$23.00     |
+|      4      |       800        |     \$24.50     |
+|      5      |       300        |     \$24.00     |
+
+Let's try to summarize these transactions by constructing an "average price per share".
+
+It doesn't make sense to simply take the average of the price per share for the 5 transactions, because some transactions were for a much larger number of shares.
+
+Presumably, we should weight the price per share more heavily based on the number of shares sold.
+
+This is called a "volume weight average price" (VWAP), because we are constructing a weighted average of the stock prices using the volume (i.e.\ the number of shares sold) as the weight.
+
+The simplest way to compute the VWAP is to first multiply the number of shares sold by the price per share for each transaction, and then add these together to obtain the total sales amount.
+
+Next, add the number of shares sold for all the transactions to obtain the total number of shares sold.
+
+Finally, the VWAP is the total sales amount divided by the total number of shares sold.
+
+Calculate the VWAP for the 5 transactions, and report your result using a `cat()` statement, rounding to 2 decimal places.
+
+**Solution**
+
+```{r}
+# Multiply shares by price per share 
+first.weighted <- 1000 * 22.50
+second.weighted <- 200 * 24
+third.weighted <- 750 * 23
+fourth.weighted <- 800 * 24.50 
+fifth.weighted <- 300 * 24
+
+# Add the weighted values to get the total sales amount
+total.sales <- (first.weighted + second.weighted + third.weighted + fourth.weighted + fifth.weighted)
+
+# Add the number of all shares sold for total number of shares sold
+total.shares <- (1000 + 200 + 750 + 800 + 300)
+
+# Divide total sales by total shares for the vwap
+vwap <- total.sales / total.shares
+
+cat(
+  "The VWAP for these 5 transactions is: ",
+  formatC(
+    vwap, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+\newpage
+
+End of problem 5
+
+\newpage
+
+
+
+
+
+# Problem 6: Profits
+
+A construction firm has 6 projects in three districts:
+
+| Project | District | Costs | Revenue |
+|:-------:|:---------|:-----:|:-------:|
+|    1    |   Red    |  277  |   362   |
+|    2    |   Red    |  315  |   397   |
+|    3    |   Blue   |  148  |   159   |
+|    4    |   Blue   |  206  |   241   |
+|    5    |   Green  |  483  |   564   |
+|    6    |   Green  |  388  |   450   |
+
+The profit for each project is defined as the revenue for the project minus the cost for the project.
+
+Construct a pie chart showing the relative proportions of the total profits for each district.
+
+**Solution**
+
+```{r}
+# Calculate profits for each district (revenue - cost)
+profit.one <- (362 - 277)
+profit.two <- (397 - 315)
+profit.three <- (159 - 148)
+profit.four <- (241 - 206)
+profit.five <- (564 - 483)
+profit.six <- (450 - 388)
+
+slices <- c(profit.one, profit.two, profit.three, profit.four, profit.five, profit.six)
+lbls <- c('red 1', 'red 2', 'blue 3', 'blue 4', 'green 5', 'green 6')
+colors.vector <- c('red1', 'red2', 'blue1', 'blue2', 'green1', 'green2')
+pie(slices, labels = lbls, clockwise=TRUE, main='Chart of Profits for Each District', col=colors.vector)
+```
+
+
+
+
+\newpage
+
+End of Problem 6
+
+\newpage
+
+
+
+
+# Problem 7: The Median Theorem (Extra Credit 1 point)
+
+In Euclidean geometry, any two lines that are not parallel will necessarily intersect in one point.
+
+However, in general three lines will not necessarily intersect in a single point, so when that happens it's "special".
+
+There are many theorems in geometry that deal with three lines all intersecting in a point.
+
+One of the simplest of these theorems is called the "Median Theorem".
+
+A *median* is a line segment from the vertex of a triangle to the midpoint of the opposite side.
+
+The Median Theorem states that the three medians of a triangle always intersect in a single point.
+
+In this problem, we'll use R to create a visualization of this theorem by drawing a triangle and then constructing the three medians.
+
+For best results, I suggest this process:
+
+* First, create an empty plot with no data.
+
+* Next, draw in all the line segments.
+
+* After that, draw the points.
+
+* Finally, add the text annotations.
+
+
+
+## Part (a): Defining the triangle
+
+Let's start by defining the three vertices of a triangle:
+
+| Point | *x* | *y* |
+|:-----:|:---:|:---:|
+|   A   |  2  |  3  |
+|   B   |  4  | 18  |
+|   C   |  9  | 12  |
+
+Create variables to store the $x$- and $y$-coordinates of these three points.
+
+Try to use some sort of sensible naming conventions for your variables.
+
+Then create an empty plot with no data, with the $x$-axis ranging from 0 to 10 and the $y$-axis ranging from 0 to 20. Be sure to give your graph a main title, and titles for the $x$- and $y$-axes.
+
+Finally, draw the triangle *ABC*. Place points at the vertices, and annotate them with text using the names "A", "B", and "C".
+
+**Solution**
+
+```{r}
+x.coord <- c(2, 4, 9)
+y.coord <- c(3, 18, 12)
+
+plot(
+  x = NULL,
+  xlim = c(0, 10),
+  ylim = c(0 , 20),
+  main = "Graph for part (a)",
+  xlab = 'x',
+  ylab = 'y',
+  las = 1
+)
+
+polygon(
+  x.coord,
+  y.coord,
+  border = 'navy',
+  lwd = 4,
+)
+
+# Points for ABC
+points(
+  x.coord,
+  y.coord,
+  pch = 19,
+  cex = 2,
+  col = 'lightblue', 
+)
+
+# Labels for ABC
+text(
+    x = 2, 
+    y = 1, 
+    labels = "A"
+)
+
+text(
+    x = 4, 
+    y = 20, 
+    labels = "B"
+)
+
+text(
+    x = 9.5, 
+    y = 12, 
+    labels = "C"
+)
+```
+
+
+
+
+## Part (b): Computing a midpoint
+
+Our next step will be to construct the median from vertex $A$.
+
+Recall that the median is defined as the line segment from a vertex to the midpoint of the opposite side.
+
+The opposite side from vertex $A$ is the line segment $BC$, so the median is the line segment from $A$ to the midpoint of $BC$.
+
+Let's use $D$ to denote the midpoint of the line segment $BC$, so the median is the line segment $AD$.
+
+
+To calculate the $x$-coordinate of the midpoint of a line segment, take the average of the $x$-coordinates of the endpoints of the line segment.
+
+That is, take the $x$-coordinate of the starting point and the $x$-coordinate of the ending point, add them together, and divide by 2:
+$$
+\hbox{Midpoint x-coordinate}\ =\ \frac{x0 + x1}{2}
+$$
+
+Similarly, the $y$-coordinate of the midpoint of a line segment is the average of the $y$-coordinates of the endpoints of the line segment:
+$$
+\hbox{Midpoint y-coordinate}\ =\ \frac{y0 + y1}{2}
+$$
+
+Calculate the $x$- and $y$-coordinates of the point $D$ i.e.\ the midpoint of the line segment $BC$. Save your results in variables, and report each using an individual `cat()` statement, displaying the values with 2 decimal places.
+
+**Solution**
+
+```{r}
+# For B: (4, 18) & C: (9, 12)
+midpoint.x <- (4 + 9) / 2
+midpoint.y <- (18 + 12) / 2
+point.d <- c(midpoint.x, midpoint.y)
+  
+cat(
+  "The midpoint of side BC, point D is: ",
+  formatC(
+    point.d, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+## Part (c): Drawing a median
+
+Using your code from part (a), construct a graph of triangle $ABC$ and add in the median line segment from $A$ to the point $D$ that you calculated in part (b). Include a small point at $D$ and a text annotation.
+
+**Solution**
+
+```{r}
+x.coord <- c(2, 4, 9)
+y.coord <- c(3, 18, 12)
+
+plot(
+  x = NULL,
+  xlim = c(0, 10),
+  ylim = c(0 , 20),
+  main = "Graph for part (c)",
+  xlab = 'x',
+  ylab = 'y',
+  las = 1
+)
+
+# Plot the triangle
+polygon(
+  x.coord,
+  y.coord,
+  border = 'navy',
+  lwd = 4,
+)
+
+# MIDPOINT D: (6.50 15.00)
+segments(
+  x0 = 2, 
+  y0 = 3,
+  x1 = 6.5, 
+  y1 = 15,
+  lty = 'solid',
+  lwd = 2,
+  col = 'black'
+)
+
+text(
+    x = 6.8, 
+    y = 16.5, 
+    labels = "D",
+)
+
+points(
+  midpoint.x,
+  midpoint.y,
+  pch = 15,
+  cex = 2,
+  col = 'black', 
+)
+
+# Points for ABC
+points(
+  x.coord,
+  y.coord,
+  pch = 19,
+  cex = 2,
+  col = 'lightblue', 
+)
+
+# Labels for ABC
+text(
+    x = 2, 
+    y = 1, 
+    labels = "A"
+)
+
+text(
+    x = 4, 
+    y = 20, 
+    labels = "B"
+)
+
+text(
+    x = 9.5, 
+    y = 12, 
+    labels = "C"
+)
+```
+
+
+
+
+## Part (d): Drawing another median
+
+In this part, we'll draw another median line.
+
+The side opposite vertex $B$ is $AC$, so the median line segment from $B$ will end at the midpoint of side $AC$.
+
+Let $E$ denote the midpoint of side $AC$, so the median line segment is from $A$ to $E$.
+
+Calculate the $x$- and $y$-coordinates of $E$ i.e.\ the midpoint $AC$, and store these values in variables.
+
+Then copy over your code from part (c) for drawing the triangle and add code to draw the median line segment $BE$.
+
+**Solution**
+
+```{r}
+# For A: (2, 3) & C: (9, 12)
+midpoint.x.2 <- (2 + 9) / 2
+midpoint.y.2 <- (3 + 12) / 2
+point.e <- c(midpoint.x.2, midpoint.y.2)
+  
+cat(
+  "The midpoint of side AC, point E is: ",
+  formatC(
+    point.e, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+```{r}
+x.coord <- c(2, 4, 9)
+y.coord <- c(3, 18, 12)
+
+plot(
+  x = NULL,
+  xlim = c(0, 10),
+  ylim = c(0 , 20),
+  main = "Graph for part (d)",
+  xlab = 'x',
+  ylab = 'y',
+  las = 1
+)
+
+# Plot the triangle
+polygon(
+  x.coord,
+  y.coord,
+  border = 'navy',
+  lwd = 4,
+)
+
+# MIDPOINT D: (6.50, 15.00)
+segments(
+  x0 = 2, 
+  y0 = 3,
+  x1 = 6.5, 
+  y1 = 15,
+  lty = 'solid',
+  lwd = 2,
+  col = 'black'
+)
+
+text(
+    x = 6.8, 
+    y = 16.5, 
+    labels = "D",
+)
+
+points(
+  midpoint.x,
+  midpoint.y,
+  pch = 15,
+  cex = 2,
+  col = 'black', 
+)
+
+# MIDPOINT E: (5.50 7.50)
+segments(
+  x0 = 4, 
+  y0 = 18,
+  x1 = 5.5, 
+  y1 = 7.5,
+  lty = 'solid',
+  lwd = 2,
+  col = 'black'
+)
+
+text(
+    x = 5.5, 
+    y = 5.5, 
+    labels = "E",
+)
+
+points(
+  midpoint.x.2,
+  midpoint.y.2,
+  pch = 15,
+  cex = 2,
+  col = 'black', 
+)
+
+# Points for ABC
+points(
+  x.coord,
+  y.coord,
+  pch = 19,
+  cex = 2,
+  col = 'lightblue', 
+)
+
+# Labels for ABC
+text(
+    x = 2, 
+    y = 1, 
+    labels = "A"
+)
+
+text(
+    x = 4, 
+    y = 20, 
+    labels = "B"
+)
+
+text(
+    x = 9.5, 
+    y = 12, 
+    labels = "C"
+)
+```
+
+
+
+
+## Part (e): Drawing the third median
+
+In your graph from part (d), notice that the two medians intersect in a single point.
+
+It would be AMAZING if the third median also went through this point.
+
+In this part, you should copy your code from part (d), and then draw in the third median.
+
+You'll have to figure out what the endpoints are for this third median, and how to calculate them.
+
+When you're all done, the graph should be AMAZING!!
+
+**Solution**
+
+```{r}
+# For A: (2, 3) & B: (4, 18)
+midpoint.x.3 <- (2 + 4) / 2
+midpoint.y.3 <- (3 + 18) / 2
+point.f <- c(midpoint.x.3, midpoint.y.3)
+  
+cat(
+  "The midpoint of side AB, point F is: ",
+  "(",
+  midpoint.x.3,
+  ", ",
+  midpoint.y.3,
+  ")",
+  sep = ""
+)
+```
+```{r}
+# Final midpoint of all three segments by averaging the x and y coordinates
+# For A: (2, 3) & B: (4, 18)
+midpoint.x.4 <- (2 + 4 + 9) / 3
+midpoint.y.4 <- (3 + 18 + 12) / 3
+point.g <- c(midpoint.x.4, midpoint.y.4)
+  
+cat(
+  "The midpoint of side AB, point F is: ",
+  formatC(
+    point.g, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+```{r}
+# Final graph, updated with AB midpoint and final midpoint 'g'
+x.coord <- c(2, 4, 9)
+y.coord <- c(3, 18, 12)
+
+plot(
+  x = NULL,
+  xlim = c(0, 10),
+  ylim = c(0 , 20),
+  main = "Graph for part (e)",
+  xlab = 'x',
+  ylab = 'y',
+  las = 1
+)
+
+# Plot the triangle
+polygon(
+  x.coord,
+  y.coord,
+  border = 'navy',
+  lwd = 4,
+)
+
+# MIDPOINT D: (6.50, 15.00)
+segments(
+  x0 = 2, 
+  y0 = 3,
+  x1 = 6.5, 
+  y1 = 15,
+  lty = 'solid',
+  lwd = 2,
+  col = 'black'
+)
+
+text(
+    x = 6.8, 
+    y = 16.5, 
+    labels = "D",
+)
+
+points(
+  midpoint.x,
+  midpoint.y,
+  pch = 15,
+  cex = 2,
+  col = 'black', 
+)
+
+# MIDPOINT E: (5.50, 7.50)
+segments(
+  x0 = 4, 
+  y0 = 18,
+  x1 = 5.5, 
+  y1 = 7.5,
+  lty = 'solid',
+  lwd = 2,
+  col = 'black'
+)
+
+text(
+    x = 5.5, 
+    y = 5.5, 
+    labels = "E",
+)
+
+points(
+  midpoint.x.2,
+  midpoint.y.2,
+  pch = 15,
+  cex = 2,
+  col = 'black', 
+)
+
+# MIDPOINT F: (3.00 10.50)
+segments(
+  x0 = 9, 
+  y0 = 12,
+  x1 =3, 
+  y1 = 10.5,
+  lty = 'solid',
+  lwd = 2,
+  col = 'black'
+)
+
+text(
+    x = 2.5, 
+    y = 12, 
+    labels = "F",
+)
+
+points(
+  midpoint.x.3,
+  midpoint.y.3,
+  pch = 15,
+  cex = 2,
+  col = 'black', 
+)
+
+# MIDPOINT G  (5.00, 11.00)
+points(
+  midpoint.x.4,
+  midpoint.y.4,
+  pch = 15,
+  cex = 2,
+  col = 'black', 
+)
+
+text(
+    x = 5, 
+    y = 13, 
+    labels = "G",
+)
+
+# Points for ABC
+points(
+  x.coord,
+  y.coord,
+  pch = 19,
+  cex = 2,
+  col = 'lightblue', 
+)
+
+# Labels for ABC
+text(
+    x = 2, 
+    y = 1, 
+    labels = "A"
+)
+
+text(
+    x = 4, 
+    y = 20, 
+    labels = "B"
+)
+
+text(
+    x = 9.5, 
+    y = 12, 
+    labels = "C"
+)
+```
+
+
+
+
+
+
+## Part (f): Another triangle
+
+Let's try this again with another triangle:
+
+| Point | *x* | *y* |
+|:-----:|:---:|:---:|
+|   A   |  7  |  4  |
+|   B   |  2  | 15  |
+|   C   |  8  | 10  |
+
+Create an empty plot with no data, with the $x$-axis ranging from 0 to 10 and the $y$-axis ranging from 0 to 20. Include a main title and titles for the $x$- and $y$-axes.
+
+Draw the triangle $ABC$ along with the three medians.
+
+You are welcome and encouraged to copy your code from above and modify it.
+
+If you wrote your code properly, this problem should be very easy, because all you have to do is to alter the values for the coordinates of the three points and then everything else should be defined in terms of these three variables.
+
+Most of your work will be in adjusting the position of the text labels so they look good with these points.
+
+**Solution**
+
+```{r}
+x.coord <- c(7, 2, 8)
+y.coord <- c(4, 15, 10)
+
+plot(
+  x = NULL,
+  xlim = c(0, 10),
+  ylim = c(0 , 20),
+  main = "Graph for part (f)",
+  xlab = 'x',
+  ylab = 'y',
+  las = 1
+)
+
+polygon(
+  x.coord,
+  y.coord,
+  border = 'navy',
+  lwd = 4,
+)
+
+# Points for ABC
+points(
+  x.coord,
+  y.coord,
+  pch = 19,
+  cex = 2,
+  col = 'lightblue', 
+)
+
+# Labels for ABC
+text(
+    x = 7, 
+    y = 2, 
+    labels = "A"
+)
+
+text(
+    x = 1.5, 
+    y = 15.5, 
+    labels = "B"
+)
+
+text(
+    x = 8.4, 
+    y = 10.5, 
+    labels = "C"
+)
+```
+
+
+
+
+## Part (g): Randomized example generator
+
+You might be wondering if I picked a special triangle where all the three medians just happen to intersect.
+
+Is the Median Theorem really true for ALL triangles?
+
+The only way to definitively answer this question is by a formal mathematical proof (the answer is yes, the theorem is always true).
+
+But another approach to this question is to look at a lot of randomly generated triangles, and if the theorem is true for a sequence of these randomly generated examples then that's a strong indication that it's true in general.
+
+We can use the `runif()` function to generate random values on an interval, which takes three input arguments:
+
+* The number of random values generated, denoted `n`.
+
+* The minimum of the interval, denoted `min`.
+
+* The maximum of the interval, denoted `max`.
+
+To generate one random value on the interval from 0 to 10, we have:
+```{r}
+runif(
+  n = 1,
+  min = 0,
+  max = 10
+)
+```
+
+In our example, the $x$-axis ranged from 0 to 10, so we can generate a random value for the $x$-coordinate of the point $A$:
+```{r}
+A.x <-
+  runif(
+    n = 1,
+    min = 0,
+    max = 10
+  )
+```
+
+
+Similarly, the $y$-axis ranged from 0 to 20, so we can generate a random value for the $y$-coordinate of the point $A$:
+```{r}
+A.y <-
+  runif(
+    n = 1,
+    min = 0,
+    max = 20
+  )
+```
+
+
+In this problem, use the `runif()` function to generate random values for the $x$- and $y$-coordinates of the points $A$, $B$, and $C$.
+
+Then draw the triangle $ABC$ and add the medians.
+
+If you do all of this in a single code chunk, then each time you run the code chunk you'll get a different random triangle, and you should see that the Median Theorem is true in every case.
+
+Hint: if you wrote your code properly in the previous examples, this should be very easy to implement, because once you've generated the random values for $A$, $B$, and $C$ then everything else should be defined in terms of these variables so you can just copy your code from above with little modification.
+
+Don't worry about text annotations; it's hard to get the placement right when the points are randomly generated, and anyway all we're doing here is looking to see if the three medians intersect.
+
+**Solution**
+
+```{r}
+# Generate random values for each vertex of the triangle 
+A.x <-
+  runif(
+    n = 1,
+    min = 0,
+    max = 10
+  )
+
+A.y <-
+  runif(
+    n = 1,
+    min = 0,
+    max = 20
+  )
+
+B.x <-
+  runif(
+    n = 1,
+    min = 0,
+    max = 10
+  )
+
+B.y <-
+  runif(
+    n = 1,
+    min = 0,
+    max = 20
+  )
+
+C.x <-
+  runif(
+    n = 1,
+    min = 0,
+    max = 10
+  )
+
+C.y <-
+  runif(
+    n = 1,
+    min = 0,
+    max = 20
+  )
+
+# Calculate the midpoints using the generated values
+D.x <- (B.x + C.x) / 2
+D.y <- (B.y + C.y) / 2
+
+E.x <- (A.x + C.x) / 2
+E.y <- (A.y + C.y) / 2
+
+F.x <- (A.x + B.x) / 2
+F.y <- (A.y + B.y) / 2
+
+# Define coordinates to pass to polygon
+x.coord <- c(A.x, B.x, C.x)
+y.coord <- c(A.y, B.y, C.y)
+
+plot(
+  x = NULL,
+  xlim = c(0, 10),
+  ylim = c(0, 20),
+  main = "Graph for Q.7, Part (g)",
+  xlab = 'x',
+  ylab = 'y'
+)
+
+# Draw polygon using generated values 
+polygon(
+  x.coord,
+  y.coord,
+  border = 'navy',
+  lwd = 4,
+)
+
+# Draw segments for DEF
+# Segment for Midpoint D, for BC
+segments(
+  x0 = A.x, 
+  y0 = A.y,
+  x1 = D.x, 
+  y1 = D.y,
+  lty = 'solid',
+  lwd = 2,
+  col = 'blue'
+)
+
+points(
+  D.x,
+  D.y,
+  pch = 15,
+  cex = 1.5,
+  col = 'blue'
+)
+
+# Segment for Midpoint E, for AC
+segments(
+  x0 = B.x, 
+  y0 = B.y,
+  x1 = E.x, 
+  y1 = E.y,
+  lty = 'solid',
+  lwd = 2,
+  col = 'blue'
+)
+
+points(
+  E.x,
+  E.y,
+  pch = 15,
+  cex = 1.5,
+  col = 'blue'
+)
+
+# Segment for Midpoint F, for AB
+segments(
+  x0 = C.x, 
+  y0 = C.y,
+  x1 = F.x, 
+  y1 = F.y,
+  lty = 'solid',
+  lwd = 2,
+  col = 'blue'
+)
+
+points(
+  F.x,
+  F.y,
+  pch = 15,
+  cex = 1.5,
+  col = 'blue'
+)
+
+# Plot points for ABC
+points(
+  x.coord,
+  y.coord,
+  pch = 19,
+  cex = 2,
+  col = 'lightblue', 
+)
+```

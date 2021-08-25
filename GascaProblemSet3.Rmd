@@ -1,0 +1,833 @@
+---
+title: "Problem Set 3 Solutions"
+subtitle: 'CSCI 5a: Programming in R'
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+---
+
+First, let's clear the environment:
+```{r}
+rm( list = ls() )
+```
+
+Next, let's load in the R objects for this problem set:
+```{r}
+load( "Problem Set 3 R Objects.Rdata" )
+```
+
+
+```{r}
+ls()
+```
+
+
+
+\newpage
+
+
+# Problem 2: VWAP
+
+In Problem Set 2, problem 5, we calculated the VWAP for this set of stock transactions:
+
+| Transaction | Number of shares | Price per share |
+|:-----------:|:----------------:|:---------------:|
+|      1      |      1000        |     \$22.50     |
+|      2      |       200        |     \$24.00     |
+|      3      |       750        |     \$23.00     |
+|      4      |       800        |     \$24.50     |
+|      5      |       300        |     \$24.00     |
+
+Now we'll do this using vectorized operations.
+
+## Part (a): Creating vectors
+
+Create two vectors, one to represent the number of shares sold, and the other to represent the price per share. 
+Make sure the elements of these vectors line up properly, with the first element in each of them referring to the first transaction, the second element referring to the second transaction, etc.
+
+Report each vector using a separate `cat()` statement, displaying the values with two decimal places.
+
+**Solution**
+
+```{r}
+shares.sold <- c(1000, 200, 750, 800, 300)
+price.per.share <- c(22.5, 24, 23, 24.5, 24)
+
+cat(
+  "The number of shares sold per transaction is: ",
+  formatC(
+    shares.sold, 
+    format = "f",
+    digits = 2
+  ),
+  '\n'
+)
+
+cat(
+  "The price per share per transaction is: ",
+  formatC(
+    price.per.share, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+## Part (b): Total sales amount
+
+We calculate the total sales amount by multiplying the number of shares sold in each transaction by the price per share for that transaction, and then adding all of these terms together. Calculate the total sales amount by using a vectorized operation with the two vectors you created in part (a) and the `sum()` function. Store your result in a variable, and report it using with a `cat()` statement, displaying the values with 2 decimal places.
+
+**Solution**
+
+```{r}
+# Multiply number of shares sold by price per share 
+total.sales.amount <- sum(shares.sold * price.per.share)
+
+cat(
+  "The total sales amount is: ",
+  formatC(
+    total.sales.amount, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+## Part (c): Total number of shares sold
+
+Use a vector function and the vectors you created in part (a) to calculate the total number of shares sold i.e.\ the total sales volume. Store this result in a variable, and report it using a `cat()` statement, displaying this value with 2 decimal places.
+
+**Solution**
+
+```{r}
+total.shares.sold = sum( shares.sold )
+
+cat(
+  "The total number of shares sold is:",
+  formatC(
+    total.shares.sold, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+## Part (d): Overall average sales
+
+One way to calculate the volume-weighted average price (VWAP) is to use the overall average sales, which is defined as the ratio of the total sales amount divided by the total number of shares sold. 
+Use this method along with your results in parts (b) and (c) to calculate the VWAP for this data. Report your result using a `cat()` statement, rounding to 2 decimal places.
+
+**Solution**
+
+```{r}
+# VWAP = total.sales.amount / total.shares.sold
+vwap <- c( total.sales.amount / total.shares.sold )
+
+cat(
+  "The VWAP is: ",
+  formatC(
+    vwap, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+## Part (g): VWAP
+
+Now it's your turn!
+
+The vector `problem.2.sales.volume.vector` contains data on the sales volume for 80 stock transactions on a particular stock. Let's directly display the first 5 values for this vector:
+```{r}
+head( problem.2.sales.volume.vector, n = 5 )
+```
+
+The vector `problem.2.price.per.share.vector` contains data on the price per share for the same 80 stock transactions. Let's directly display the first 5 values for this vector:
+```{r}
+head( problem.2.price.per.share.vector, n = 5 )
+```
+
+Calculate the VWAP for this data. Report your final result using a `cat()` statement, rounding to 2 decimal places.
+
+**Solution**
+
+```{r}
+# shares.sold * price.per.share, then sum for total sales amount
+p2.total.sales = sum(problem.2.price.per.share.vector * problem.2.sales.volume.vector)
+p2.total.shares = sum( problem.2.sales.volume.vector  )
+
+# total sales / total # of shares sold
+p2.vwap = ( p2.total.sales / p2.total.shares )
+
+cat(
+  "The VWAP for part g is: ",
+  formatC(
+    p2.vwap, 
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+\newpage
+
+End of problem 2
+
+\newpage
+
+
+
+
+
+# Problem 4: Summarizing a Vector
+
+Let's explore a vector of data, and summarize its main features.
+
+The vector `problem.4.data` contains a set of numeric values.
+
+
+## Part (a): Direct display
+
+Directly display the first 5 elements of the vector `problem.4.data`. Format each value with exactly 2 decimal places.
+
+**Solution**
+
+```{r}
+cat(
+    "Part a:",
+    formatC(
+        head(
+          x = problem.4.data, 
+          n = 5 
+        ),
+        format = "f",
+        digits = 2
+    )
+)
+```
+
+
+
+
+## Part (b): Vector size
+
+How many elements are in `problem.4.data`? Report your result using a `cat()` statement.
+
+**Solution**
+
+```{r}
+cat(
+    "The length of 'problem.4.data' is:",
+    formatC(
+        length( problem.4.data ),
+        format = "f",
+        digits = 2
+    )
+)
+```
+
+
+
+
+## Part (c): Sample mean
+
+What is the sample mean of the values in `problem.4.data`? Report your result using a `cat()` statement, displaying the value with 2 decimal places.
+
+**Solution**
+
+```{r}
+cat(
+    "The mean of 'problem.4.data' is:",
+    formatC(
+        mean( problem.4.data ),
+        format = "f",
+        digits = 2
+    )
+)
+```
+
+
+
+
+## Part (d): Sample standard deviation
+
+What is the sample standard deviation of the values in `problem.4.data`? Report your result using a `cat()` statement, displaying the value with 2 decimal places.
+
+**Solution**
+
+```{r}
+cat(
+    "The standard deviation of 'problem.4.data' is:",
+    formatC(
+        sd( problem.4.data ),
+        format = "f",
+        digits = 2
+    )
+)
+```
+
+
+
+
+## Part (e): Sample maximum
+
+What is the sample maximum of the values in `problem.4.data`? Report your result using a `cat()` statement, displaying the value with 2 decimal places.
+
+**Solution**
+
+```{r}
+cat(
+    "The sample maximum of 'problem.4.data' is:",
+    formatC(
+        max( problem.4.data ),
+        format = "f",
+        digits = 2
+    )
+)
+```
+
+
+
+
+## Part (f): Bottom 5 values
+
+Directly display the 5 smallest values in `problem.4.data`. (Hint: use the `sort()` and `head()` functions.) Format the values with exactly 2 decimal places.
+
+**Solution**
+
+```{r}
+sort.p4 <- sort( problem.4.data, decreasing = FALSE )
+smallest.five <- head( sort.p4, n = 5 )
+
+cat(
+    "The 5 SMALLEST values in 'problem.4.data' are: ",
+    formatC(
+      smallest.five,
+      format = "f",
+      digits = 2
+  )
+)
+```
+
+
+
+
+## Part (g): Top 5 values
+
+Directly display the 5 largest values in `problem.4.data`. (Hint: use your code from part (f), and change an option.) Format the values with exactly 2 decimal places.
+
+**Solution**
+
+```{r}
+sort.p4 <- sort( problem.4.data, decreasing = TRUE )
+largest.five <- head( sort.p4, n = 5 )
+
+cat(
+    "The 5 LARGEST values in 'problem.4.data' are: ",
+    formatC(
+        largest.five,
+        format = "f",
+        digits = 2,
+        big.mark = ', '
+    )
+)
+```
+
+
+
+
+\newpage
+
+End of problem 4
+
+\newpage
+
+
+
+
+
+
+# Problem 5: Lookup Vector
+
+In this problem, you will get practice in using a lookup vector to convert a character vector into a numeric vector, which can then be used for other calculations.
+
+WiDgT is an exciting new dynamic disruptive meme-based social media startup offering a carefully curated selection of artisinal hand-crafted widgets using vintage materials and methods for the lifestyle needs of the most discerning value-conscious customers.
+
+WiDgT offers five different models:
+
+| Model           | Price |
+|:----------------|------:|
+| Classic WiDgT   |  4.99 |
+| WiDgT 2.0       |  5.99 |
+| WiDgT 3k        |  8.99 |
+| Quadcore WiDgT  | 10.99 |
+| WiDgT Mach 5    | 12.99 |
+
+Here is data for five sales, listing the widget model and the number of widgets sold.
+
+| Transaction |     Model     | Number of Items |
+|:-----------:|:--------------|:---------------:|
+|      1      | WiDgT 2.0     |        50       |
+|      2      | WiDgT Mach 5  |        65       |
+|      3      | WiDgT 3k      |        10       |
+|      4      | Classic WiDgT |        25       |
+|      5      | WiDgT 3k      |        40       |
+
+
+
+## Part (a): Widget model vector
+
+Construct a character vector to represent the widget model for each transaction. In other words, create a character vector to represent the column of widget models in the table. Be sure that your vector is a character vector consisting of the widget model names. When you've finished, display this vector directly.
+
+**Solution**
+
+```{r}
+transaction.lookup.vector <- c(
+  'Classic WiDgT' = 25,
+  'WiDgT 2.0' = 50,
+  'WiDgT 3k' = 50,
+  'Quadcore WiDgT' = 0,
+  'WiDgT Mach 5' = 65
+)
+
+transaction.vector <- 
+  c('WiDgT 2.0', 'WiDgT Mach 5', 'WiDgT 3k', 'Classic WiDgT', 'WiDgT 3k')
+```
+
+```{r}
+transaction.vector
+```
+
+
+
+
+## Part (b): Number of items vector
+
+Construct a numeric vector to represent the number of widgets sold in each transaction. In other words, create a numeric vector to represent the column of the number of items. When you've finished, display this vector directly.
+
+**Solution**
+
+```{r}
+widgets.sold.vector <- c( 50, 65, 10, 25, 40 )
+```
+
+```{r}
+widgets.sold.vector
+```
+
+
+
+## Part (c): Widget model price lookup vector
+
+Construct a named vector that associates the price of each widget model with the name of the widget model. When you've finished, display this vector directly.
+
+**Solution**
+
+```{r}
+price.lookup.vector <- c(
+  'Classic WiDgT' = 4.99,
+  'WiDgT 2.0' = 5.99,
+  'WiDgT 3k' = 8.99,
+  'Quadcore WiDgT' = 10.99,  
+  'WiDgT Mach 5' = 12.99
+)
+```
+
+```{r}
+price.lookup.vector
+```
+
+
+
+
+## Part (d): Looking up prices
+
+Use the lookup vector you constructed in part (c) to convert the character vector from part (a) into a numeric vector of prices. Display this vector directly.
+
+**Solution**
+
+```{r}
+widget.price.per.transaction <- price.lookup.vector [ transaction.vector ]
+```
+
+```{r}
+widget.price.per.transaction
+```
+
+
+
+
+## Part (e): Total sales
+
+Use the numeric vector of the number of items sold from part (b) and the numeric vector of item prices from part (d) to calculate the total sales amount for these 5 transactions. (Hint: think about a dot product.) Report your final result using a `cat()` statement, displaying this value with 2 decimal places.
+
+**Solution**
+
+```{r}
+# part b: widgets.sold.vector
+# part d: widget.price.per.transaction
+total.sales <- sum( widgets.sold.vector * widget.price.per.transaction)
+
+cat(
+  "The total sales amount for these 5 transactions is: $",
+  formatC(
+    total.sales,
+    format = "f",
+    digits = 2
+  )
+)
+```
+
+
+
+
+\newpage
+
+End of Problem 5
+
+\newpage
+
+
+# Problem 6: Cleaning Data
+
+In this problem, we continue to work with WiDgT data.
+
+In problem 6, we first constructed two vectors by hand, one for the widget model for the transaction, and one for the price per widget, and then we used vectorized operations to calculate the total sales amount.
+
+In this problem I'm going to give you two vectors:
+
+* The vector `problem.6.model.vector` contains the name of the widget model for the transaction.
+
+* The vector `problem.6.number.of.items.vector` contains the number of widgets sold in that transaction.
+
+These vectors were loaded in at the beginning of the problem set.
+
+For this problem, your ultimate goal is to calculate the total sales amount, just as in Problem 6.
+
+Unfortunately, there's a small complication: some of the entries in `problem.6.model.vector` are spelled incorrectly. 
+So, your first step is to repair these incorrect spellings, and only after that to perform the calculation. 
+
+To do this, you should create a named vector as a lookup vector, and then use this to transform the incorrect entries to the proper version. Then you can use vectorized methods to calculate the total sales amount, just as in Problem 6.
+
+You're on your own for this one -- I'm not going to give you a carefully sequenced set of steps. In the end, we just want a single `cat()` statement, reporting the total sales amount displayed to 2 decimal places. 
+
+This problem is important for practical, real-world skills for two reasons:
+
+* First, this sort of repair and transformation is a common operation in many projects.
+
+* Second, you're going to have to decide how to implement this -- after all, in the real world you won't have me standing there specifying each step of the process for you.
+
+You should document your process using text and multiple code chunks, with clear, descriptive variable names.
+
+Remember, in the end all that you should report to the TAs is the total sales amount, displaying this value with 2 decimal places.
+
+**Sneaky coding trick** Try using the option `big.mark = ","` in your `formatC()` statement.
+
+**Solution**
+
+```{r}
+# Step 1: create a named lookup vector
+# Pull all model names and create a model.names variable 
+model.names <- unique( problem.6.model.vector )
+
+model.names.lookup.vector <- c( model.names )
+```
+
+```{r}
+# Step 2: 
+# Begin repairing errors by changing each unique value to the standard value
+repair.vector <- 
+  c(
+    '3k' = 'WiDgT 3k',
+    'WiDgT 3k' = 'WiDgT 3k',
+    'classic' = 'Classic WiDgT',
+    'Classic WiDgT' = 'Classic WiDgT',
+    'Mach 5' = 'WiDgT Mach 5', 
+    'Widget 2.O' = 'WiDgT 2.0',
+    'WiDgT 2.0' = 'WiDgT 2.0',
+    'WiDgT Mach 5' = 'WiDgT Mach 5',
+    'Quadcore WiDgT' = 'Quadcore WiDgT',
+    'Widget mach 5' = 'WiDgT Mach 5', 
+    'Widget Mch 5' = 'WiDgT Mach 5'
+  )
+
+# Update lookup vector 
+final.model.names <- repair.vector [ problem.6.model.vector ]
+```
+
+```{r}
+# Update vector to include model pricing 
+widget.price.lookup.vector <- c(
+  'Classic WiDgT' = 4.99,
+  'WiDgT 2.0' = 5.99,
+  'WiDgT 3k' = 8.99,
+  'Quadcore WiDgT' = 10.99,  
+  'WiDgT Mach 5' = 12.99
+)
+
+# Add prices to our corrected vector
+price.per.model.vector <- widget.price.lookup.vector [ final.model.names ]
+
+# Calculate the total sales amount by cross referencing model names to prices 
+total.widget.sales <- sum( price.per.model.vector * problem.6.number.of.items.vector )
+  
+# Display final answer with single cat statement
+cat(
+  "The total sales amount is: $",
+  formatC(
+    total.widget.sales,
+    format = "f",
+    digits = 2,
+    big.mark = ','
+  )
+)
+```
+
+
+
+
+\newpage
+
+End of problem 6
+
+\newpage
+
+
+
+# Problem 7: The Lemniscate of Bernoulli
+
+I love this problem, because it illustrates a beautiful application of the ideas of vectorized operations and the `seq()` function. You might not be interested in the actual content of the problem itself, but I hope you will learn some useful techniques for your own practice.
+
+A "lemniscate" is a curve that is shaped like a figure 8 on its side or an infinity symbol.
+
+There are many different kinds of lemniscates, and a great reference for these different curves is the Wikipedia entry for "lemniscate".
+
+We are going to draw the so-called "Lemniscate of Bernoulli".
+
+There are many ways to specify this lemniscate, but we will focus on what are called *parametric equations*.
+
+That means that we have one numeric variable, which is the "parameter", and then we calculate the values of *x* and *y* based on this parameter.
+
+By varying the value of the parameter, we obtain a set of paired values of *x* and *y*.
+
+These paired values are coordinated data, because the *x* and *y* values correspond to the same value of the parameter.
+
+To create a lemniscate, we use the parameter $\theta$ with a range from 0 to $2\pi$.
+
+The formula for *x* is:
+$$
+x(\theta)\ =\ \frac{ \cos( \theta ) }{1 + \sin^2( \theta )}
+$$
+
+The formula for *y* is:
+$$
+x(\theta)\ =\ \frac{ \sin( \theta ) \cdot \cos( \theta ) }{1 + \sin^2( \theta )}
+$$
+
+In this problem, we'll first get familiar with these parametric equations by calculating a few points by hand and graphing them. Then we'll see how to use the `seq()` function and vectorized operations to automate this process.
+
+## Part (a): First point
+
+Using the formulas for $x(\theta)$ and $y(\theta)$, calculate the value of *x* and *y* for $\theta = 0$. Store these two values in separate variables. Then report each result using a `cat()` statement, displaying the value with 3 decimal places.
+
+Hint: store the value of the parameter in a variable, and then use this variable throughout your code. Then you can do the next two parts easily by just copying and pasting the code block and making a few modifications.
+
+**Solution**
+
+
+
+
+
+
+## Part (b): Second point
+
+Using the formulas for $x(\theta)$ and $y(\theta)$, calculate the value of *x* and *y* for $\theta = \pi/6$. Store these two values in separate variables. Then report each result using a `cat()` statement, displaying the value with 3 decimal places.
+
+Remember, if you designed your code well in part (a), you can just copy and paste the code blocks and then modify a few things to obtain the answers for this part.
+
+**Solution**
+
+
+
+
+
+
+
+## Part (c): Third point
+
+Using the formulas for $x(\theta)$ and $y(\theta)$, calculate the value of *x* and *y* for $\theta = \pi/3$. Store these two values in separate variables. Then report each result using a `cat()` statement, displaying the value with 3 decimal places.
+
+Remember, if you designed your code well in part (a), you can just copy and paste the code blocks and then modify a few things to obtain the answers for this part.
+
+**Solution**
+
+
+
+
+
+
+## Part (d): Create the *x*-vector
+
+Take the three *x*-values you created in parts (a) through (c) and put them into a vector. Save this vector in a variable, and report it using a `cat()` statement with all values formatted with 3 decimal places.
+
+**Solution**
+
+
+
+
+
+
+
+## Part (e): Create the *y*-vector
+
+Take the three *y*-values you created in parts (a) through (c) and put them into a vector. Save this vector in a variable, and report it using a `cat()` statement with all values formatted with 3 decimal places.
+
+**Solution**
+
+
+
+
+
+
+## Part (f): Draw a graph
+
+Now let's graph the line segments corresponding to these three points.
+
+* Create a completely blank plotting display with no axes, surrounding box, or axis title, but include a main title such as "The Lemniscate of Bernoulli".
+
+* The range of the *x*-axis should be from -1 to 1, and the range of the *y*-axis should be from -1 to 1.
+
+* Include horizontal and vertical reference lines.
+
+* Then use the `lines()` function to plot the two line segments.
+
+* Finally, draw in the three points.
+
+**Solution**
+
+
+
+
+
+
+## Part (g): Constructing the parameter vector
+
+At this point, you should understand the basic strategy: pick a range of parameter values, calculate the values of *x* and *y* for each particular value, and then graph the corresponding line segments using the `lines()` segment.
+
+However, our graph doesn't look very much like those nice pictures in the article in Wikipedia.
+
+That's because we only use three points.
+
+But that was a lot of work! We had to write individual code chunks for each calculation, and then create dedicated variables for each *x* and *y* value.
+
+Now we're going to see how to use the `seq()` function and vectorized operations to automate this process and allow us to easily generate many points with no extra work.
+
+We'll start by creating 20 line segments for the lemniscate instead of just 2.
+
+Remember that we needed 3 points to specify two connected line segments.
+
+Thus, to specify 20 connected line segments, we'll need 21 points.
+
+Finally, remember that the parameter $\theta$ ranges from 0 to $2\pi$.
+
+So, for this part, you have to create a numeric vector using the `seq()` function with 21 values ranging from 0 to $2\pi$. Store this vector in a variable, and report the first 5 values using a `cat()` statement, formatting each value with 3 decimal places.
+
+**Solution**
+
+
+
+
+
+
+
+## Part (h): *x*-value vector
+
+Using the vector of parameter values that you created in part (g), use vectorized operations to create a vector of corresponding *x*-values. (Hint: remember the parametric formula!) Store this vector in a variable, and report the first 5 values using a `cat()` statement, formatting each value with 3 decimal places.
+
+**Solution**
+
+
+
+
+
+
+
+## Part (i): *y*-value vector
+
+Using the vector of parameter values that you created in part (g), use vectorized operations to create a vector of corresponding *y*-values. (Hint: remember the parametric formula!) Store this vector in a variable, and report the first 5 values using a `cat()` statement, formatting each value with 3 decimal places.
+
+**Solution**
+
+
+
+
+
+
+
+## Part (j): Draw the graph
+
+Copy your code from part (f) for drawing the graph of the lemniscate. Then run it using the *x*-vector and *y*-vector from parts (h) and (i), respectively.
+
+**Solution**
+
+
+
+
+
+
+## Part (k): Drawing the graph
+
+Almost done!
+
+Our graph in part (j) looks better than what we achieved in part (f), because we were able to draw in more points.
+
+But it's still not the beautiful smooth curve you see in the Wikipedia article.
+
+That's because using only 20 line segments still doesn't provide enough resolution.
+
+How about 1000 points? I bet that would work a lot better.
+
+For this part, you should use the `seq()` function to construct a parameter value vector with 1001 points, and then use vectorized operations to construct *x* and *y* vectors with 1001 points.
+
+Finally, draw a graph with these high-resolution vectors. Just draw the line segment, and forget about drawing the individual points, because there are too many of them. This time it should look a lot better.
+
+I'm going to leave this up to you to organize. However, if you wrote your code well in the previous parts, you should be able to do this problem by copying and pasting and then changing one value. Good luck!
+
+**Solution**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

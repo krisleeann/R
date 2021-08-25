@@ -1,0 +1,1119 @@
+---
+title: "Problem Set 6"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+---
+
+
+Let's clear the environment:
+```{r}
+rm( list = ls() )
+```
+
+
+
+Before you begin, load in the R objects for this problem set:
+```{r}
+load( "Problem Set 6 R Objects.Rdata" )
+```
+
+```{r}
+ls()
+```
+
+
+
+\newpage
+
+
+# Problem 1: Recoding Numeric Representations of Categories
+
+We've seen that one strategy for handling categorical data is to encode it as a number. For instance, the four sales offices of WiDgT could be encoded like this:
+
+| Office         | Numeric Code |
+|:---------------|:------------:|
+| Boston         |       1      |
+| London         |       2      |
+| Salt Lake City |       3      |
+| Shanghai       |       4      |
+
+I'm not enthusiastic about this strategy, and if I am working with a dataset using such an approach I convert the numeric codes to a factor.
+
+In this problem we'll explore three different techniques to convert these numeric codes properly.
+
+Note that this data also contains missing data represented by -9, so we'll also have to deal with that.
+
+
+## Part (a): First method
+
+The vector `problem.1.part.a.data` contains the data for the Office categorical variable, represented using the numeric scheme from the problem statement.
+
+
+In our first approach, we will use three steps:
+
+* First, change all the -9 values to `NA`.
+
+* Second, convert the numeric vector to a factor using the `factor` function.
+
+* Third, change the levels by directly assigning a character vector with the location names to the levels of the factor.
+
+When you're all done, display a frequency count table of the values in the factor.
+
+**Solution**
+
+```{r}
+# change the -9 values to NA
+loc = which(problem.1.part.a.data == -9)
+
+problem.1.part.a.data[loc] <- NA
+
+# Second, convert the numeric vector to a factor using the `factor` function
+factor.vector <- factor(problem.1.part.a.data)
+
+# Third, change the levels 
+levels(factor.vector) <- c(
+    'Boston',
+    'London',
+    'Salt Lake City',
+    'Shanghai'
+)
+
+# display a frequency count table
+table(factor.vector)
+```
+
+
+
+## Part (b): Second method
+
+The vector `problem.1.part.b.data` contains the data for the Office categorical variable, represented using the numeric scheme from the problem statement.
+
+
+In this approach, we'll convert the vector to a factor first, and then change the -9 values to an `NA` when we rename the levels.
+
+* First, convert the numeric vector to a factor using the `factor` function.
+
+* Second, rename the levels by directly assigning a character vector with the location names to the levels of the factor. Note that you can use `NA` in the character vector, so this should correspond with the "-9" level.
+
+When you're all done, display a table of the values in the factor.
+
+For part (b), make sure that you always work with the vector `problem.2.part.b.data`.
+
+**Solution**
+
+```{r}
+# convert vector to factor, then change -9 to NA
+factor.vector <- factor(problem.1.part.b.data)
+
+# rename the levels by assigning a character vector with the location names to the levels
+levels(factor.vector) <- c(
+  NA,
+  'Boston',
+  'London',
+  'Salt Lake City',
+  'Shanghai'
+)
+
+# display a table of the values in the factor
+table(factor.vector)
+```
+
+
+
+## Part (c)
+
+The vector `problem.1.part.c.data` contains the data for the Office categorical variable, represented using the numeric scheme from the problem statement.
+
+
+Now we'll use a third method!
+
+* Pre-specify the factor levels when we convert the vector to a factor, and this will automatically convert the -9 values to `NA`.
+
+* Then rename the factor levels by directly assigning a character vector with the location names.
+
+When you're all done, display a table of the values in the factor.
+
+
+For part (c), make sure that you always work with the vector `problem.2.part.c.data`.
+
+**Solution**
+
+```{r}
+# Pre-specify the factor levels when we convert the vector to a factor
+factor.vector <- factor(problem.1.part.c.data,
+                        levels = c('1', '2', '3', '4'))
+
+# Then rename the factor levels by assigning a character vector with the location names
+levels(factor.vector) <- c(
+  'Boston',
+  'London',
+  'Salt Lake City',
+  'Shanghai'
+)
+
+# display a table of the values in the factor
+table(factor.vector)
+```
+
+
+
+\newpage
+
+End of Problem 1
+
+\newpage
+
+
+
+
+# Problem 2: Fixing Typos
+
+WiDgT has a listing of their customers, stored in the character vector `problem.2.data`. There are 4 types of customers: Individual, Corporate, Academic, and Government. Unfortunately, there were some problems with the data entry, and the data contains some mistakes.
+
+## Part (a)
+
+Use the `table()` function to tabulate the values in the vector `problem.2.data`, and display the result.
+
+**Solution**
+
+```{r}
+table(problem.2.data)
+```
+
+
+
+## Part (b)
+
+Convert the `problem.2.data` vector to a factor. Then directly display the first 8 values using a `head()` command.
+
+**Solution**
+
+```{r}
+factor.vector <- factor(problem.2.data)
+head(problem.2.data, n = 8)
+```
+
+
+
+## Part (c)
+
+Repair the typos by grouping factor levels. For instance, all the various misspellings of the level "Corporate" should be grouped to the correct name, and likewise with the other levels. When you're done, construct a table and display it.
+
+**Solution**
+
+```{r}
+levels(factor.vector) <- c(
+  "Academic", "Academic",
+  "Corporate", "Corporate", "Corporate",
+  "Government", "Government",
+  "Individual"
+)
+
+table(factor.vector)
+```
+
+
+
+\newpage
+
+End of Problem 2
+
+\newpage
+
+
+
+# Problem 3: Cutting Numeric Data
+
+A depression scale has been developed so that a patient receives a numerical score, ranging from 0 to 15, which then used as the basis for a diagnosis:
+
+* If the score is greater than or equal to 13, then the patient is diagnosed with "Major Depression".
+
+* If the score is greater than or equal to 10 but strictly less than 13, then the patient is diagnosed with "Mild Depression".
+
+* If the score is greater than or equal to 7 but strictly less than 10, then the patient is diagnosed with "Borderline Depression".
+
+* If the score is strictly less than 7, then the patient is diagnosed as "Normal".
+
+The variable `problem.3.data.` contains depression scores for a sample of patients.
+
+## Part (a): The `cut()` function
+
+Use the `cut()` function to create a factor with the ranges for the different depression diagnoses. Store this factor in a variable, and directly display the first 8 values using a `head()` statement.
+
+Hint: there are a couple of different ways to do this, but I think the cleanest is to use the `right` option. Look very carefully at the factor levels!
+
+**Solution**
+
+```{r}
+# Use the `cut()` function to create a factor with ranges for different depression diagnoses
+depression.scale <- cut(
+  problem.3.data,
+  breaks = c(0, 7, 10, 13, Inf),
+  labels = c('Normal', 
+             'Borderline Depression', 
+             'Mild Depression', 
+             'Major Depression'),
+  right = FALSE
+)
+
+head(depression.scale, n = 8)
+```
+
+
+
+## Part (b)
+
+Construct a frequency count table of the values in the factor you created in part (a). Save this frequency count table in a variable, and display it directly.
+
+**Solution**
+
+```{r}
+frequency.count.table <- table(depression.scale)
+frequency.count.table
+```
+
+
+
+## Part (c)
+
+Using the table you created in part (b), construct a pie chart to display the relative proportions of the three diagnoses. Be sure to include a main title, set the pie slices to clockwise rotation, and specify a set of colors for the pie chart.
+
+**Solution**
+
+```{r}
+pie(
+  frequency.count.table,
+  main = "Problem 3 Part(c)",
+  col = c('forestgreen', 'yellow', 'orange', 'red'),
+  clockwise = TRUE
+)
+```
+
+
+
+\newpage
+
+End of Problem 3
+
+\newpage
+
+
+
+
+# Problem 4: Hank Aaron Career Batting Performance
+
+So far in CSCI S-5a when we've calculated baseball batting statistics I've provided a nice tabulation of all the basic information.
+
+But what if you don't have a nice tabulation, but instead just have a set of raw data values?
+
+The vector `problem.4.data` contains a random sequence of values representing the career singles, doubles, triples, home runs, and outs for Hank Aaron.
+
+## Part (a): Tabulating the values
+
+Construct a frequency count table that summarizes the values in `problem.4.data` and display it directly.
+
+**Solution**
+
+```{r}
+table(problem.4.data)
+```
+
+
+
+## Part (b)
+
+The problem with this table is that, while all the numbers are correct, they aren't listed in the conventional order. Instead, we would like this order:
+
+* Single
+
+* Double
+
+* Triple
+
+* Home Run
+
+* Out
+
+To resolve this issue, convert the character vector `problem.4.data` into a factor with the preferred ordering of the levels, and save this in a variable. Then once again construct a table and display it; it should still have the same numeric values, but this time they should be listed in the conventional manner.
+
+**Solution**
+
+```{r}
+# convert the character vector `problem.4.data` into a factor
+factor.vector <- factor(
+  problem.4.data,
+  levels = c(
+    'Single', 'Double', 'Triple', 'Home Run', 'Out'
+  )
+) 
+
+# construct a table and display it
+frequency.count.table <- table(factor.vector)
+frequency.count.table
+```
+
+
+
+## Part (c)
+
+Construct a relative proportions table of the values in `problem.4.data`.
+
+In this table, we're not reporting one of the special batting metrics (i.e.\ batting average, on-base percentage, and slugging percentage) but instead are simply interested in the relative proportions. Thus, we don't have to use the specialized baseball reporting convention of 3 decimal places. Instead, since we're focused on the relative proportions, keep the display simple and just use 2 decimal places.
+
+**Solution**
+
+```{r}
+round(proportions(frequency.count.table),
+      digits = 2 )
+```
+
+
+
+\newpage
+
+End of Problem 4
+
+\newpage
+
+
+
+
+# Problem 5: Pie Chart vs. Barplot
+
+I've mentioned that many people disapprove of pie charts. Instead, they advocate using bar plots to display this information. In this problem, we'll explore this issue.
+
+Other than the graph in part (a), the answers for this problem are not really "right" or "wrong", and we'll give you credit as long as you write something reasonable. However, I think you'll get more out of the problem if you engage with it and really try to think about this issues here.
+
+## Part (a)
+
+Construct a barplot of the data from problem 4.
+
+**Solution**
+
+```{r}
+barplot(
+  table(factor.vector),
+  main = 'Problem 5, Part(a)',
+  xlab = 'x',
+  ylab = 'y',
+  col = 'lavender', 
+  las = 1
+)
+```
+
+
+
+## Part (b)
+
+Using the barplot from part (a), can you easily determine Hank Aaron's batting average? Don't do any calculations in your head -- just by looking at the shapes, can you make a reasonable estimate of Hank Aaron's batting average? Explain your answer with a few sentences.
+
+**Solution**
+
+I don't think that I could personally determine an estimate of his batting average by simply looking at the barplot. I suppose I could provide a very rough estimate if needed, but it probably wouldn't be in the same ball park as the right answer; no pun intended. 
+
+
+
+## Part (c)
+
+Construct a pie chart for the data from Problem 4.
+
+**Solution**
+
+```{r}
+pie(
+  table(factor.vector),
+  main = 'Problem 5, Part (b)',
+  col = c('blue', 'orange', 'purple', 'darkgreen', 'red'),
+  clockwise = TRUE
+)
+```
+
+
+
+## Part (d)
+
+Using the pie chart from part (c), can you easily determine Hank Aaron's batting average? Don't do any calculations in your head -- just by looking at the shapes, can you make a reasonable estimate of Hank Aaron's batting average? Explain your answer with one or two sentences.
+
+**Solution**
+
+Although I think my estimate wouldn't be accurate, in my opinion, the pie chart provides a graph that is more appealing to the eye than the barplot. While a human provided answer won't be 100% accurate, the estimate provided from the pie chart would definitely be closer to the actual average than the barplot. 
+
+
+
+## Part (e)
+
+Comparing your answers from parts (b) and (d), do you agree with people who think we should always use barplots instead of pie charts? Explain your answer with one or two sentences.
+
+**Solution**
+
+No. I think there's a time and place for each type of chart, but for this example in particular, the pie chart provides a visual example that is easier to read than a barplot. 
+
+
+
+\newpage
+
+End of Problem 5
+
+\newpage
+
+
+
+
+# Problem 6: Likert Scales
+
+In a *Likert scale*, study subjects are presented with a set of statements and a range of possible responses for each statement.
+
+For each item, the subject's response is converted to a numerical score, and then the individual scores are summed together to obtain an overall score.
+
+This overall score is then compared to a range of intervals, and the subject is categorized depending on which interval the score falls in.
+
+For instance, suppose we have a simple Likert scale for diagnosing if a subject is upset, consisting of 3 statements:
+
+| Item | Statement          |
+|:----:|:-------------------|
+|   1  | "I feel sad"       |
+|   2  | "I feel angry"     |
+|   3  | "I feel irritated" |
+
+Each statement can be answered with one of 5 verbal responses:
+
+| Verbal Response     | Numeric Score |
+|:--------------------|:-------------:|
+| "Strongly Disagree" |       0       |
+| "Disagree"          |       1       |
+| "No Opinion"        |       2       |
+| "Agree"             |       3       |
+| "Strongly Agree"    |       4       |
+
+To diagnose a subject, we first convert the subject's verbal responses for each item to the corresponding numeric scores, and then sum the numeric scores to obtain a total score for that subject.
+
+Then we can look up the diagnosis on an interval scale:
+
+| Total Score | Diagnosis          |
+|:------------|:-------------------|
+|    0 - 4    | "Not Upset"        |
+|    5 - 8    | "Moderately Upset" |
+|    9 - 12   | "Very Upset"       |
+
+For instance, suppose a subject has these responses:
+
+| Item | Statement          | Response         | Score |
+|:----:|:-------------------|:-----------------|:-----:|
+|   1  | "I feel sad"       | "Agree"          |   3   |
+|   2  | "I feel angry"     | "No Opinion"     |   2   |
+|   3  | "I feel irritated" | "Strongly Agree" |   4   |
+
+Thus, the subject has a total score of 3 + 2 + 4 = 9.
+
+Then we can look up the diagnosis on the interval scale, and we find that it falls in the range 9 - 12, which has a diagnosis of "Very Upset".
+
+This is a very simple example of a Likert scale, but don't be deceived -- these simple scored questionnaires are the basis for much of mental health research.
+
+Some famous Likert scales that are often used in research are:
+
+* The *Beck's Depression Inventory* (BDI)
+
+* The *Hamilton Depression Rating Scale* (HDRS)
+
+* The *Pittsburgh Sleep Quality Index* (PSQI)
+
+In this problem, we'll score a simple Likert scale, produce a table of the relative proportions for the diagnoses, and construct a barplot visualization.
+
+
+## Part (a): Constructing the verbal response scoring lookup vector
+
+Construct a lookup vector that will convert verbal responses to the corresponding numeric score using the table from the problem statement:
+
+| Verbal Response     | Numeric Score |
+|:--------------------|:-------------:|
+| "Strongly Disagree" |       0       |
+| "Disagree"          |       1       |
+| "No Opinion"        |       2       |
+| "Agree"             |       3       |
+| "Strongly Agree"    |       4       |
+
+Save this lookup vector in a variable, and display it directly so the TAs can check that you did this properly.
+
+**Solution**
+
+```{r}
+verbal.response.lookup.vector <- c(
+  "Strongly Disagree" = 0,
+  "Disagree" = 1,
+  "No Opinion" = 2,
+  "Agree" = 3,
+  "Strongly Agree" = 4
+)
+
+verbal.response.lookup.vector
+```
+
+
+
+
+
+## Part (b): Scoring the first response item
+
+The vector `problem.6.item.1.verbal.response.data` contains the verbal responses to the item 1 prompt "I feel sad" for a cohort of study subjects.
+
+Using the lookup vector that you constructed in part (a), create a vector consisting of the numeric scores corresponding to the verbal responses in `problem.6.item.1.verbal.response.data`. Then construct a table of the frequency counts of these numeric scores so that the TAs can be sure you did this correctly.
+
+**Solution**
+
+```{r}
+# create a vector of numeric scores of verbal responses
+numeric.scores.vector <- 
+  verbal.response.lookup.vector[problem.6.item.1.verbal.response.data]
+
+item.1.scores <- numeric.scores.vector
+
+head(item.1.scores, n = 8)
+
+# construct a table of the frequency count
+table(item.1.scores)
+```
+
+
+
+## Part (c): Scoring the second response item
+
+The vector `problem.6.item.2.verbal.response.data` contains the verbal responses to the item 2 prompt "I feel angry" for a cohort of study subjects.
+
+Using the lookup vector that you constructed in part (a), create a vector consisting of the numeric scores corresponding to the verbal responses in `problem.6.item.2.verbal.response.data`. Then construct a table of the frequency counts of these numeric scores so that the TAs can be sure you did this correctly.
+
+**Solution**
+
+```{r}
+# use the lookup vector to create a vector of numeric scores
+numeric.scores.vector <- verbal.response.lookup.vector[problem.6.item.2.verbal.response.data]
+
+item.2.scores <- numeric.scores.vector
+
+table(item.2.scores)
+```
+
+
+
+## Part (d): Scoring the third response item
+
+The vector `problem.6.item.3.verbal.response.data` contains the verbal responses to the item 3 prompt "I feel irritated" for a cohort of study subjects.
+
+Using the lookup vector that you constructed in part (a), create a vector consisting of the numeric scores corresponding to the verbal responses in `problem.6.item.3.verbal.response.data`. Then construct a table of the frequency counts of these numeric scores so that the TAs can be sure you did this correctly.
+
+**Solution**
+
+```{r}
+# use the lookup vector to create a vector of numeric scores
+numeric.scores.vector <- verbal.response.lookup.vector[problem.6.item.3.verbal.response.data]
+
+item.3.scores <- numeric.scores.vector
+
+table(item.3.scores)
+```
+
+
+
+## Part (e): Calculating the total score
+
+Using vectorized addition with the vectors of numeric scores that you created in parts (b) through (d), construct a vector consisting of the total scores for the study cohort. Store this vector in a variable, and directly display the first 8 values of it.
+
+**Solution**
+
+```{r}
+total.score <- item.1.scores + item.2.scores + item.3.scores
+
+head(total.score, n = 8)
+```
+
+
+
+## Part (f): Categorizing the scores
+
+From the problem statement, we have this table of intervals and their associated verbal diagnosis:
+
+| Total Score | Verbal Diagnosis   |
+|:------------|:-------------------|
+|    0 - 4    | "Not Upset"        |
+|    5 - 8    | "Moderately Upset" |
+|    9 - 12   | "Very Upset"       |
+
+Using the `cut()` function with the vector of total scores that you constructed in part (e), create a factor with the corresponding verbal diagnoses for the study cohort. Save this factor in a variable, and directly display the first 8 values.
+
+**Solution**
+
+```{r}
+verbal.diagnosis <- cut(
+  total.score,
+  breaks = c(-Inf, 4, 8, 12),
+  labels = c("Not Upset", "Moderately Upset", "Very Upset")
+)
+
+head(verbal.diagnosis, n = 8)
+```
+
+
+
+## Part (g): Frequency count table
+
+Using the factor of verbal diagnoses that you constructed in part (f), construct a table of the verbal diagnosis frequency counts. Save this table in a variable, and display it directly for the TAs.
+
+**Solution**
+
+```{r}
+verbal.diagnosis.frequency.table <- table(verbal.diagnosis)
+
+verbal.diagnosis.frequency.table
+```
+
+
+
+## Part (h): Relative proportions table
+
+Using the frequency count table that you constructed in part (g), construct a table of the relative proportions of the verbal diagnoses. Save this table in a variable, and display it directly, rounding the values to 2 decimal places.
+
+**Solution**
+
+```{r}
+relative.proportions <- proportions(verbal.diagnosis.frequency.table)
+
+round(relative.proportions,
+      digits = 2)
+```
+
+
+
+## Part (i): Barplot
+
+Using the table that you constructed in part (h), draw a barplot that displays the relative proportions of the different diagnoses. Set the range of the *y*-axis to go from 0 to 0.6, include a main title and titles for the *x*-axis and *y*-axis, and explicitly specify a color for the bars.
+
+**Solution**
+
+```{r}
+barplot(
+  height = relative.proportions,
+  xlim = NULL,
+  ylim = c(0, 1),
+  main = "Problem 6, Part (i)",
+  xlab = 'Verbal Diagnosis',
+  ylab = 'Relative Proportion',
+  col = 'lavender'
+)
+```
+
+
+
+\newpage
+
+End of Problem 6
+
+\newpage
+
+
+
+
+
+# Problem 7: Final Grades -- Finally!
+
+This is one of my favorite problems in CSCI E-5a, and I'm excited to present it to you.
+
+The actual calculation itself isn't particularly difficult or amazing, but what makes this problem so appealing is that you'll see how we can perform a sophisticated computation using just the tools that we've developed so far in this course.
+
+Each step is very simple, but when combined together the end result is impressive.
+
+OK, enough blather -- let's go!!
+
+We've spend a lot of time in CSCI E-5a learning how to calculate final grades.
+
+That's because this seemingly simple procedure actually involves techniques from most of our lectures so far:
+
+* From Lecture 2, we use the concept of variables to store intermediate results in an extended computation.
+
+* From Lecture 3, we use the concepts of vectors and vectorized operations to automate the calculation of preliminary scores for an entire group of students.
+
+* From Lecture 4, we use the method of iteration to construct a vector consisting of the maximum of the two preliminary scores for each student.
+
+* From Lecture 5, we can perform conditional branching with the `ifelse()` function as an alternative method for constructing a vector consisting of the maximum of the two preliminary scores for each student.
+
+* Back to Lecture 3, we use lookup vectors to pro-rate undergraduate scores.
+
+In Problem 6 from Problem Set 5, we put all these techniques together, and we were able to calculate the final course score, given the raw scores for each student and their registration status.
+
+However, for all the work that we've put into calculating final grades, we *still* haven't been able to execute the entire procedure using R.
+
+The problem is that we haven't been able to assign letter grades based on the final course score.
+
+In this problem, we will finally see how to automate this entire process in R, starting with the raw scores for each student and their registration status, and ending with a factor consisting of the final course letter grade for each student.
+
+Before we start: can you think of a tool that we have learned in this lecture that will enable us to perform this final step?
+
+Much of this problem is a repetition of the work that you did in Problem Set 5, Problem 6, and you are encouraged to re-use your code from that problem or to use the code in the Problem Set 5 solutions.
+
+
+## Part (a): Standardizing the Problem Set scores
+
+The vector `problem.7.problem.set.raw.score.data` contains numeric data on problem set raw scores for a group of students.
+
+The maximum number of possible points for the problem set raw score is 88.
+
+Standardize this numeric data, so that the maximum number of possible points is 100.
+
+Save these standardized values in a variable, and report the first 8 values using a `cat()` statement, displaying the values with 2 decimal places.
+
+**Solution**
+
+```{r}
+pset.standardized.scores.vector <- problem.7.problem.set.raw.score.data / 0.88
+
+cat(
+  "Standardized P.Set Scores:\n",
+  formatC(
+    head(pset.standardized.scores.vector, n = 8),
+    format = 'f',
+    digits = 2
+  )
+)
+```
+
+
+
+## Part (b): Standardizing the Midterm Assessment scores
+
+The vector `problem.7.midterm.assessment.raw.score.data` contains numeric data on Midterm Assessment raw scores for a group of students.
+
+The maximum number of possible points for the Midterm Assessment raw score is 80.
+
+Standardize this numeric data, so that the maximum number of possible points is 100.
+
+Save these standardized values in a variable, and report the first 8 values using a `cat()` statement, displaying the values with 2 decimal places.
+
+**Solution**
+
+```{r}
+midterm.standardized.scores.vector <- problem.7.midterm.assessment.raw.score.data / 0.80
+
+cat(
+  "Standardized Midterm Scores:\n",
+  formatC(
+    head(midterm.standardized.scores.vector, n = 8),
+    format = 'f',
+    digits = 2
+  )
+)
+```
+
+
+
+## Part (c): Standardizing the Comprehensive Assessment scores
+
+The vector `problem.7.comprehensive.assessment.raw.score.data` contains numeric data on Comprehensive Assessment raw scores for a group of students.
+
+The maximum number of possible points for the Comprehensive Assessment raw score is 80.
+
+Standardize this numeric data, so that the maximum number of possible points is 100.
+
+Save these standardized values in a variable, and report the first 8 values using a `cat()` statement, displaying the values with 2 decimal places.
+
+**Solution**
+
+```{r}
+comp.standardized.scores.vector <- problem.7.comprehensive.assessment.raw.score.data / 0.80
+
+cat(
+  "Standardized Comprehensive Exam Scores:\n",
+  formatC(
+    head(comp.standardized.scores.vector, n = 8),
+    format = 'f',
+    digits = 2
+  )
+)
+```
+
+
+
+## Part (d): Preliminary Score 1
+
+Recall that the Preliminary Score 1 is calculated as a weighted average of 3 components:
+
+| Componenent                                 | Weight |
+|:--------------------------------------------|:------:|
+| Problem Set Standardized Score              |  0.20  |
+| Midterm Assessment Standarized Score        |  0.30  |
+| Comprehensive Assessment Standardized Score |  0.50  |
+
+
+Using vectorized operations with the standardized score vectors that you created in parts (a) through (c), construct a vector of the Preliminary Score 1 values for the students. Save this vector in a variable, and report the first 8 elements using a `cat()` statement, displaying each value with 2 decimal places.
+
+**Solution**
+
+```{r}
+prelim.score.1 <- (
+  0.2 * pset.standardized.scores.vector +
+  0.3 * midterm.standardized.scores.vector +
+  0.5 * comp.standardized.scores.vector
+)
+
+cat(
+  "Prelim. Score 1:\n",
+  formatC(
+    head(prelim.score.1, n = 8),
+    format = 'f',
+    digits = 2
+  )
+)
+```
+
+
+
+## Part (e): Preliminary Score 2
+
+Recall that the Preliminary Score 2 is calculated as a weighted average of 2 components:
+
+| Component                                 | Weight |
+|:--------------------------------------------|:------:|
+| Midterm Assessment Standardized Score        |  0.35  |
+| Comprehensive Assessment Standardized Score |  0.65  |
+
+
+Using vectorized operations with the standardized score vectors that you created in parts (a) through (c), construct a vector of the Preliminary Score 2 values for the students. Save this vector in a variable, and report the first 8 elements using a `cat()` statement, displaying each value with 2 decimal places.
+
+**Solution**
+
+```{r}
+prelim.score.2 <- (
+  0.35 * midterm.standardized.scores.vector +
+  0.65 * comp.standardized.scores.vector
+)
+
+cat(
+  "Prelim. Score 2:\n",
+  formatC(
+    head(prelim.score.2, n = 8),
+    format = 'f',
+    digits = 2
+  )
+)
+```
+
+
+
+## Part (f): Graduate Course Score
+
+The Graduate Course Score is the maximum of the Preliminary Score 1 and Preliminary Score 2 values.
+
+Construct a vector of the Graduate Course Score values for each student in the group. Save this vector in a variable, and display the first 8 elements of your result using a `cat()` statement, displaying each value with 2 decimal places.
+
+**Solution**
+
+```{r}
+graduate.scores <- numeric(length(prelim.score.1))
+
+for (i in 1:length(prelim.score.1)) {
+  graduate.scores[i] <- max(
+    prelim.score.1[i],
+    prelim.score.2[i]
+  )
+}
+
+cat(
+  "Graduate final scores:\n",
+  formatC(
+    head(graduate.scores, n = 8),
+    format = 'f',
+    digits = 2
+  )
+)
+```
+
+
+
+## Part (g): Pro-Rating Undergraduate Scores
+
+Each student has a registration status, which is either "Graduate" or "Undergraduate".
+
+CSCI E-5a is taught as a Master's-level graduate course, and students registered for undergraduate credit are only required to do 75% of the work of students registered for graduate credit.
+
+Thus, I "pro-rate" an undergraduate student's score to reflect this difference in expectations. 
+
+If a student is registered for Undergraduate credit, I multiply (or "pro-rate") the Graduate Course Score by 4/3 to obtain the Final Course Score.
+
+If a student is registered for graduate credit, the Final Course Score is just the Graduate Course Score.
+
+You can think of this as multiplying the Graduate Course Score by 1.
+
+Thus, a pro-rating multiplier is associated with each registration status:
+
+| Registration Status | Pro-Rating Multiplier |
+|:--------------------|:---------------------:|
+| Undergraduate       |           4/3         |
+| Graduate            |            1          |
+
+For this problem, the registration status data is contained in the vector `problem.7.registration.status.data`.
+
+First, construct a numeric lookup vector that can take a registration status and return the corresponding pro-rating multiplier.
+
+Next, using this numeric lookup vector and the `problem.7.registration.status.data` vector, construct a vector of pro-rating multipliers for this group of students and save this in a variable.
+
+Finally, use this vector of pro-rating multipliers and the vector of Graduate Course Scores from part (f) to construct a vector of Final Course Scores for each student. Save this vector in a variable, and report the first 8 values of your result using a `cat()` statement, displaying each value with 2 decimal places.
+
+**Solution**
+
+```{r}
+undergrad.scores <- numeric(length(prelim.score.1))
+
+credit.status.lookup <- c(
+  'Graduate' = 1,
+  'Undergraduate' = 4/3
+)
+
+credit.status <- credit.status.lookup[problem.7.registration.status.data]
+
+final.scores <- graduate.scores * credit.status
+
+cat(
+  "Final scores:\n",
+  formatC(
+    head(final.scores, n = 8),
+    format = 'f',
+    digits = 2
+  )
+)
+```
+
+
+
+## Part (h): Assigning letter grades
+
+Now we're going to perform the very last step in our calculation.
+
+Given a student's final score, we determine which range it falls within, and then assign the corresponding letter grade:
+
+| Range                  | Letter Grade |
+|:-----------------------|:-------------|
+| 93 <= Final Score      |       A      |
+| 90 <= Final Score < 93 |       A-     |
+| 87 <= Final Score < 90 |       B+     |
+| 83 <= Final Score < 87 |       B      |
+| 80 <= Final Score < 83 |       B-     |
+| 77 <= Final Score < 80 |       C+     |
+| 73 <= Final Score < 77 |       C      |
+| 70 <= Final Score < 73 |       C-     |
+| 67 <= Final Score < 70 |       D+     |
+| 60 <= Final Score < 67 |       D      |
+| Final Score < 60       |       F      |
+
+Do you see how we can do this?
+
+We can use the `cut()` function!
+
+Using the `cut()` function along with the vector of Final Course Scores that you calculated in part (g), construct a vector of letter grades for the students in the group. Save this vector in a variable, and report the first 8 elements using a `cat()` statement.
+
+**BIG HINT:** Look at the Final Course Score for the very first student, and make sure that your code assigns the correct letter grade for this score.
+
+**Solution**
+
+```{r}
+letter.grades.factor.vector <- cut(
+  final.scores,
+  breaks = c(-Inf, 60, 67, 70, 73, 77, 80, 83, 87, 90, 93, Inf),
+  labels = c('F', 'D', 'D+', 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A'),
+  right = FALSE
+)
+
+letter.grades <- head(letter.grades.factor.vector, n = 8)
+letter.grades
+
+cat(
+  "\nFinal Letter Scores:\n",
+  formatC(
+    letter.grades,
+    format = 'f',
+    digits = 0
+  )
+)
+```
+
+
+
+## Part (i): Grouping the letter grades
+
+Let's group the grades so that they are just the letter itself, without any plus or minus:
+
+| Letter Grades | Grouped Letter Grade |
+|:--------------|:--------------------:|
+| A or A-       |           A          |
+| B+, B, or B-  |           B          |
+| C+, C, or C-  |           C          |
+| D+ or D       |           D          |
+| F             |           F          |
+
+Create a new factor with just the group levels "A", "B", "C", "D", and "F" by grouping the levels of the letter grades factor you created in part (h). Save this grouped factor in a variable, and directly display the first 8 values.
+
+**Solution**
+
+```{r}
+letter.grades.vector <- letter.grades.factor.vector
+  
+levels(letter.grades.vector) = c(
+  'F', 'D', 'D', 'C', 'C', 'C', 'B', 'B', 'B', 'A', 'A'
+)
+
+letter.grades <- head(letter.grades.vector, n = 8)
+letter.grades
+
+cat(
+  "\nFinal Letter Scores:\n",
+  formatC(
+    letter.grades
+  )
+)
+```
+
+
+
+## Part (j): Constructing a relative proportion table
+
+Construct a table of the relative proportions of the grouped grades. Save this table in a variable, and directly display it, formatting the values with 2 decimal places.
+
+**Solution**
+
+```{r}
+grades.proportion.table <- proportions(
+  table(letter.grades.vector)
+)
+
+round(
+  grades.proportion.table,
+  digits = 2
+)
+```
+
+
+
+## Part (k): Barplot
+
+Using the table that you constructed in part (j), draw a barplot that displays the relative proportions of the different letter grades. Set the range of the *y*-axis to go from 0 to 0.7, include a main title and titles for the *x*-axis and *y*-axis, and explicitly specify a color for the bars.
+
+**Solution**
+
+```{r}
+barplot(
+  height = grades.proportion.table,
+  xlim = NULL,
+  ylim = c(0, 1),
+  main = 'Problem 7, Part (k)',
+  xlab = 'Grades',
+  ylab = 'Proportion',
+  col = 'hotpink',
+  las = 1
+)
+```
+
+
+
+
+
+
+

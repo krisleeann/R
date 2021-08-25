@@ -1,0 +1,1081 @@
+---
+title: "Problem Set 7"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+---
+
+
+Let's clear the global computing environment:
+```{r}
+rm( list = ls() )
+```
+
+
+Now let's load in the R objects for this problem set:
+```{r}
+load( "Problem Set 7 R Objects.Rdata" )
+```
+
+Let's display the names of all the objects that we just loaded in:
+```{r}
+ls()
+```
+
+
+# Problem 1: Vector / Factor Reporter
+
+## Part (a): Defining the function
+
+In this problem, we're going to build a more sophisticated version of the simple reporter we wrote in Module 4.
+
+Your function should take one input argument, which you can assume is either a numeric vector, a logical vector, or a factor.
+
+* First, print out the number of elements in the object.
+
+* Second, determine the class of the input object, and print this out using a `cat()` statement.
+
+* Depending on the class of the input object:
+
+    -   If the input object is a numeric vector, print the sample mean, sample standard deviation, sample minimum, and sample maximum of the non-missing values, displaying each result with 2 decimal places.
+
+    -   If the input object is a logical vector, print out the sample proportion of elements that are `TRUE`.
+
+    -   If the input object is a factor, print out the number of factor levels.
+
+-   Finally, print out the number of missing elements, and if there are any missing elements, print out their locations.
+
+Display your report with some sort of formatting. It doesn't have to be perfect, but make it so that it's readable.
+
+For this part, there's nothing to report, but write your code clearly so the TAs can understand what you're doing.
+
+**Solution**
+
+```{r}
+vf.reporter <- function(x) {
+  # print out the number of elements in the object
+  len = length(x)
+  
+  cat('Length: ', len, '\n')
+  
+  # determine the class of the input object, and print this out using a `cat()` statement
+  obj.class = class(x)
+  
+  cat('Class: ', obj.class, '\n\n')
+  
+  # depending on the class of the object, follow indiv. directions
+  # if numeric: print mean, standard deviation, minimum, and maximum with 2 digits
+  if (obj.class == 'numeric') {
+    cat(
+      'Mean: ',
+      formatC(
+        mean(x, na.rm = TRUE), 
+        format = 'f',
+        digits = 2
+      )
+    )
+    
+    cat(
+      '\nStandard Deviation: ',
+      formatC(
+        sd(x, na.rm = TRUE), 
+        format = 'f',
+        digits = 2
+      )
+    )
+    
+    cat(
+      '\nMinimum: ',
+      formatC(
+        min(x, na.rm = TRUE), 
+        format = 'f',
+        digits = 2
+      )
+    )
+    
+    cat(
+      '\nMax: ',
+      formatC(
+        max(x, na.rm = TRUE), 
+        format = 'f',
+        digits = 2
+      )
+    )
+  } else if (obj.class == 'logical' ) {
+  # if logical vector, print out the sample proportion of elements that are `TRUE`
+    cat(
+      'Proportion of true values: ',
+      formatC(
+        mean(x, na.rm = TRUE), 
+        format = 'f',
+        digits = 2
+      )
+    )
+  } else {
+  # if object is a factor, print # of factor levels
+    cat(
+      '\nNumber of levels: ',
+      formatC(
+        length(levels(x)), 
+        format = 'f',
+        digits = 0
+      )
+    )
+  }
+
+  # print # of missing elements
+  cat(
+      '\n\nNumber of missing elements: ',
+      formatC(
+        sum(is.na(x)), 
+        format = 'f',
+        digits = 0
+      )
+    )
+  
+  if (sum(is.na(x)) > 0) {
+    cat('\n\tLocations of missing objects:', which(is.na(x)))
+  }
+}
+```
+
+
+
+## Part (b): Mystery R object A
+
+Run your function on the object `problem.1.a.data`.
+
+**Solution**
+
+```{r}
+vf.reporter(problem.1.a.data)
+```
+
+
+
+## Part (c): Mystery R object B
+
+Run your function on the object `problem.1.b.data`.
+
+**Solution**
+
+```{r}
+vf.reporter(problem.1.b.data)
+```
+
+
+
+## Part (d): Mystery R object C
+
+Run your function on the object `problem.1.c.data`.
+
+**Solution**
+
+```{r}
+vf.reporter(problem.1.c.data)
+```
+
+
+
+\newpage
+
+End of problem 1
+
+\newpage
+
+
+
+
+# Problem 2: Baseball Functions
+
+
+Of course I'm going to ask you this.
+
+
+## Part (a): Batting average
+
+Write a function that takes two arguments, the number of at-bats and the number of hits, and returns a numeric value representing the player's batting average.
+
+Then use this function to calculate Ted Williams' batting average. Report your result using a `cat()` statement, displaying this value using the standard baseball convention i.e.\ no leading 0 and with three digits to the right of the decimal place.
+
+(We studied Ted Williams' batting statistics in Module 3 of Unit 2.)
+
+**Solution**
+
+```{r}
+batting.average.function <-
+  function(at.bats, hits) {
+    return(
+      hits / at.bats
+    )
+  }
+
+williams.batting.average <-
+  batting.average.function(
+    at.bats = 7706,
+    hits = 2654
+  )
+
+cat(
+    'Ted Williams Batting Average: ',
+    substr(
+      formatC(
+        williams.batting.average, 
+        format = 'f',
+        digits = 3
+    ),
+    start = 2,
+    stop = 5
+  )
+)
+```
+
+
+
+## Part (b): On-Base percentage
+
+Write a function that takes five input arguments:
+
+* The number of at-bats
+
+* The number of hits
+
+* The number of bases on balls
+
+* The number of times hit by a pitch
+
+* The number of sacrifice flies
+
+The function then returns a numeric value for the on-base percentage.
+
+Then use this function to calculate Willie Mays' on-base percentage. Report your result using a `cat()` statement, displaying this value using the standard baseball convention.
+
+(We studied Willie Mays' batting statistics in Problem 1 of Problem Set 2.)
+
+
+**Solution**
+
+```{r}
+on.base.percentage.function <- function(
+  at.bats,
+  hits,
+  bob,
+  hbp,
+  sf
+) {
+  return(
+    (hits + bob + hbp) /
+    (at.bats + bob + hbp + sf)
+  )
+}
+
+willie.mays.obp <- on.base.percentage.function(
+  at.bats = 10881,
+  hits = 3283, 
+  bob = 1464,
+  hbp = 44,
+  sf = 91
+)
+
+cat(
+    'Willie Mays OBP: ',
+    substr(
+      formatC(
+        willie.mays.obp, 
+        format = 'f',
+        digits = 3
+    ),
+    start = 2,
+    stop = 5
+  )
+)
+```
+
+
+
+## Part (c): Slugging percentage
+
+Write a function that takes five arguments:
+
+* The number of at-bats
+
+* The number of hits
+
+* The number of doubles
+
+* The number of triples
+
+* The number of home runs
+
+The function then returns a numeric value for the slugging percentage.
+
+Then use this function to calculate Babe Ruth's slugging percentage. Report your result using a `cat()` statement, displaying this value using the standard baseball convention.
+
+(We studied Babe Ruth's batting statistics in Module 3 of Unit 2.)
+
+
+**Solution**
+
+```{r}
+slugging.percentage.function <- function(
+  at.bats,
+  hits, 
+  doubles,
+  triples,
+  homeruns
+) {
+  singles = hits - (doubles + triples + homeruns)
+  
+  bases = (1 * singles) + (2 * doubles) + (3 * triples) + (4 * homeruns)
+  
+  return(bases/at.bats)
+}
+
+babe.ruth.sluggs <- slugging.percentage.function(
+  at.bats = 8399,
+  hits = 2873, 
+  doubles = 506,
+  triples = 136,
+  homeruns = 714
+)
+
+cat(
+    'Babe Ruths slugging percentage: ',
+    substr(
+      formatC(
+        babe.ruth.sluggs, 
+        format = 'f',
+        digits = 3
+    ),
+    start = 2,
+    stop = 5
+  )
+)
+```
+
+
+
+\newpage
+
+End of problem 2
+
+\newpage
+
+
+
+
+# Problem 3: Baseball Reporter
+
+Now we can use the functions that you wrote in Problem 2 to help build a baseball reporter.
+
+
+## Part (a): Reporter function
+
+Write a reporter function that takes 9 input arguments:
+
+* The player's name
+
+* The number of at-bats
+
+* The number of hits
+
+* The number of doubles
+
+* The number of triples
+
+* The number of home runs
+
+* The number of bases on balls
+
+* The number of times hit by a pitch
+
+* The number of sacrifice flies
+
+
+The function then prints out a report on the player:
+
+* The report first lists the player's name.
+
+* The report then displays a tabulation of the player's basic statistics:
+
+    - The number of at-bats
+
+    - The number of outs
+
+    - The number of bases on balls
+
+    - The number of hits
+
+    - The number of singles
+
+    - The number of doubles
+
+    - The number of triples
+
+    - The number of home runs
+
+
+* Then the report lists the three standard batting performance statistics:
+
+    - Batting average
+    
+    - On-base percentage
+    
+    - Slugging percentage
+    
+All of these perfomance statistics should be reported with a `cat()` statement using the standard baseball convention.
+
+There's nothing to report here, but write your code clearly so the TAs can understand what you're doing.
+
+**Solution**
+
+```{r}
+baseball.reporter <- function(
+  name,
+  at.bats,
+  hits,
+  doubles,
+  triples,
+  homeruns,
+  bob,
+  hbp,
+  sf
+) {
+  outs = at.bats - hits
+  singles = hits - (doubles + triples + homeruns)
+  
+  batting.average <- batting.average.function(
+    at.bats = at.bats, 
+    hits = hits
+  )
+  
+  obp <- on.base.percentage.function(
+    at.bats = at.bats,
+    hits = hits,
+    bob = bob,
+    hbp = hbp,
+    sf = sf
+  )
+  
+  slugging.percentage <- slugging.percentage.function(
+    at.bats = at.bats,
+    hits = hits,
+    doubles = doubles,
+    triples = triples,
+    homeruns = homeruns
+  )
+  
+  # Print required stats
+  cat('Player:', name)
+  
+  cat('\n\tBasic Stats:')
+  
+  cat('\n\tAt-Bats:', at.bats)
+  
+  cat('\n\tOuts:', outs)
+  
+  cat('\n\tBases on Balls:', bob)
+  
+  cat('\n\tHits:', hits)
+  
+  cat('\n\tSingles:', singles)
+  
+  cat('\n\tDoubles:', doubles)
+  
+  cat('\n\tTriples:', triples)
+  
+  cat('\n\tHome runs:', homeruns)
+  
+  # Print standard batting stats
+  cat(
+    '\n\nBatting average:',
+    substr(
+      formatC(
+        batting.average,
+        format = 'f',
+        digits = 3
+      ),
+      start = 2,
+      stop = 5
+    )
+  )
+  
+  cat(
+    '\nOn base percentage:',
+    substr(
+      formatC(
+        obp,
+        format = 'f',
+        digits = 3
+      ),
+      start = 2,
+      stop = 5
+    )
+  )
+  
+  cat(
+    '\nSlugging percentage:',
+    substr(
+      formatC(
+        slugging.percentage,
+        format = 'f',
+        digits = 3
+      ),
+      start = 2,
+      stop = 5
+    )
+  )
+}
+```
+
+
+
+## Part (b): Hank Aaron
+
+Use the function you constructed in part (a) to generate a batting performance report for Hank Aaron.
+
+| Statistics        |  Value |
+|:------------------|-------:|
+| Plate appearances | 13,941 |
+| At-bats           | 12,364 |
+| Hits              |  3,771 |
+| Doubles           |    624 |
+| Triples           |     98 |
+| Home Runs         |    755 |
+| Bases on balls    |  1,402 |
+| Hit by a pitch    |     32 |
+| Sacrifice flies   |    121 |
+
+
+
+**Solution**
+
+```{r}
+baseball.reporter(
+  'Hank Aaron',
+  at.bats = 12364,
+  hits = 3771,
+  doubles = 624,
+  triples = 98,
+  homeruns = 755,
+  bob = 1402,
+  hbp = 32,
+  sf = 121
+)
+```
+
+
+
+\newpage
+
+End of problem 3
+
+\newpage
+
+
+
+
+# Problem 4: VWAP
+
+
+## Part (a)
+
+Suppose we have data on a number of stock sales for a particular company, and for each sale we know the price per share and the number of shares sold.
+
+Write a function that takes two input arguments:
+
+* The first argument is a numeric vector consisting of the price per share for each transaction.
+
+* The second argument is a numeric vector consisting of the number of shares sold for each transaction.
+
+The function then returns a numeric value for the VWAP. You can use any approach you want to do this.
+
+There's nothing to report here, but write your code clearly so the TAs can understand what you're doing.
+
+**Solution**
+
+```{r}
+vwap <- function(
+  price.per.share,
+  shares.sold
+) {
+  total.shares.sold <- sum(shares.sold)
+  
+  total.sales <- sum(price.per.share * shares.sold)
+  
+  vwap <- (total.sales / total.shares.sold)
+  
+  return(vwap)
+}
+```
+
+
+
+## Part (b)
+
+The vector `problem.4.price.per.share.data` contain the price per share for 185 stock transactions. The vector `problem.4.number.of.shares.sold.data` contains data on the number of shares sold in each of the transactions.
+
+Use the function that you defined in part (a) to calculate the VWAP for this stock. Report your result using a `cat()` statement, displaying this value with 2 decimal places.
+
+**Solution**
+
+```{r}
+part.b <- vwap(
+  price.per.share = problem.4.price.per.share.data,
+  shares.sold = problem.4.number.of.shares.sold.data
+)
+
+cat(
+  'VWAP:',
+  formatC(
+    part.b,
+    format = 'f',
+    digits = 2
+  )
+)
+```
+
+
+
+\newpage
+
+End of problem 4
+
+\newpage
+
+
+
+
+# Problem 5: Three Views
+
+In this problem, we'll examine the same set of data using three different visualization methods.
+
+For each graph, produce a finished version with all the features that we've studied e.g.\ titles, colors, point shapes, jitter, etc.
+
+When you finish the third graph, you go back and compare all three graphs. Which kinds of information are displayed by each chart? Is there one display that you think is particularly useful? Which is your personal favorite? You'll get a lot more out of this problem if you engage with it and try to draw some conclusions for yourself.
+
+## Part (a): Stripchart
+
+Construct a stripchart for the values in `problem.5.data`.
+
+**Solution**
+
+```{r}
+stripchart(
+  problem.5.data,
+  ylim = c(0, 2),
+  main = 'Problem 5, Part(a)',
+  xlab = 'x',
+  ylab = 'y',
+  method = 'jitter',
+  jitter = 0.8,
+  pch = 15,
+  col = 'hotpink'
+)
+```
+
+
+
+## Part (b): Histogram
+
+Construct a histogram for the data in `problem.5.data`.
+
+**Solution**
+
+```{r}
+hist(
+  problem.5.data,
+  main = 'Problem 5, Part(b)',
+  xlab = 'x',
+  breaks = 50,
+  col = 'lightblue'
+)
+```
+
+
+
+## Part (c): Boxplot
+
+Construct a boxplot for the values in `problem.5.data`.
+
+**Solution**
+
+```{r}
+boxplot(
+  problem.5.data,
+  main = 'Problem 5, Part(c)',
+  xlab = 'x',
+  horizontal = TRUE,
+  col = 'forestgreen'
+)
+```
+
+
+
+\newpage
+
+End of Problem 5
+
+\newpage
+
+
+
+
+# Problem 6: Removing Internal Codes, Part 1
+
+The character string vector `problem.6.cereal.brand.data` contains data on each box of cereal that is sold.
+
+Each item in this vector consists of an internal sales code and an identifier for the cereal brand.
+
+The internal sales code has a fixed length, and the identifier for the cereal brand is always 3 letters.
+
+For this problem, you should construct a frequency count table of the cereal brands and then display this in a barplot with the levels organized in decreasing order.
+
+You're on your own for this one! You'll have to figure out how to do this, and there are alternative approaches. Just make sure that you show us the frequency count table and the barplot with the levels organized in decreasing frequency, and make them look nice so the TAs can grade them.
+
+**Solution**
+
+```{r}
+# First approach, see data 
+#unique(problem.6.cereal.brand.data)
+
+# strip the first 6 char and 1 symbol 
+corrected.brands <- substr(
+  problem.6.cereal.brand.data,
+  start = 8,
+  stop = 10
+)
+
+# Check unique values again
+# unique(corrected.brands)
+
+# Create a lookup vector to correct the values
+lookup.vector <- c(
+  "KYM" = "KYM",
+  "SBZ" = "SBZ", 
+  "Kym" = "KYM",
+  "HKT" = "HKT",
+  "Sbz" = "SBZ",
+  "sbz" = "SBZ",
+  "kym" = "KYM",
+  "hKt" = "HKT",
+  "hkt" = "HKT",
+  "sbZ" = "SBZ",
+  "hkT" = "HKT"
+)
+
+corrected.brands <- lookup.vector[corrected.brands]
+
+# Check unique values, again
+#unique(corrected.brands)
+
+frequency.table <- table(corrected.brands)
+
+frequency.table <- sort(frequency.table, decreasing = TRUE)
+
+# Display frequency table of cleaned data in decreasing order
+frequency.table
+```
+
+```{r}
+# Display barplot
+barplot(
+  height = frequency.table,
+  ylim = c(0, 600), 
+  main = 'Barplot for Problem 5',
+  xlab = 'Brands',
+  ylab = 'y',
+  las = 1,
+  col = c('pink', 'orange', 'yellow')
+)
+```
+
+
+
+\newpage
+
+End of Problem 6
+
+\newpage
+
+
+
+
+# Problem 7: Removing Internal Codes, Part 2
+
+WiDgT has data on all the transactions for their retail widget sales across four regions: North, East, South, and West.
+
+The character string vector `problem.7.region.data` contains the region for each transaction, but preceded by an internal code of fixed length.
+
+The vector `problem.7.number.of.widgets.sold.data` contains the number of widgets sold in the transaction.
+
+In this problem, you must construct a table of relative proportions for the total number of widgets sold across the four regions, formatting all values with 2 decimal places.
+
+Thus, if there were 1,000 total widgets sold across all 4 regions, and 400 were sold in the North region, then in the table of relative proportions you should display the value 0.40 for North.
+
+In the table, the four regions should be labelled "North", "East", "South", and "West", and should be presented in that order.
+
+
+## Part (a): Stripping out the internal codes
+
+Create a new vector consisting of the values of `problem.7.region.data` with the internal codes stripped out.
+
+The problem statement only specified that the internal codes all have the same fixed length, but did not specify this length, so you'll have to do some exploration to determine how long it is.
+
+Then create a factor from this new vector, with the correct region labels and order, and save this factor in a variable.
+
+Finally, directly display a frequency count table of the regions so the TAs can check your work.
+
+**Solution**
+
+```{r}
+#unique(problem.7.region.data)
+
+cleaned.region.data <- substr(
+  problem.7.region.data,
+  start = 11,
+  stop = 13
+)
+
+#unique(cleaned.region.data)
+
+region.factor <- factor(
+  cleaned.region.data,
+  levels = c('nor', 'sou', 'eas', 'wes'),
+  labels = c('North', 'South', 'East', 'West')
+)
+
+table(region.factor)
+```
+
+
+
+## Part (b): North region total number of widgets sold
+
+Now let's review how to calculate the total number of widgets sold in a region.
+
+As an example, we'll focus on the North region.
+
+* First, construct a logical indexing vector where an element is `TRUE` if the corresponding element of the stripped region data from Part (a) represents the North region.
+
+* Use this logical indexing vector to select the elements of `problem.7.number.of.widgets.sold.data` that were sold in the North district.
+
+* Add up the values of the North widget sales data to obtain the total number of widgets sold, and store this in a variable.
+
+Report your final result using a `cat()` statement, formatting the value with 0 decimal places.
+
+**Solution**
+
+```{r}
+north.indexing.vector <- (region.factor == 'North')
+
+north.widgets.sold <- problem.7.number.of.widgets.sold.data[north.indexing.vector]
+
+north.total.widgets.sold <- sum(north.widgets.sold)
+
+cat(
+  "Total widgets sold in the Northern region:",
+  formatC(
+    north.total.widgets.sold,
+    format = 'f',
+    digits = 0,
+    big.mark = ','
+  )
+)
+```
+
+
+
+## Part (c): Total number of widgets sold function
+
+We could repeat the calculations we just did to obtain the total number of widgets sold for the East, South, and West regions.
+
+That would involve a lot of redundant code.
+
+Instead, let's bundle this computation into a function, which will make our code much cleaner.
+
+Write a function that takes a region name as the input argument and returns the total number of widgets sold for that region.
+
+You can assume that the factor that you created in Part (a) and `problem.7.number.of.widgets.sold.data` are global variables.
+
+There are many ways to do this, but here's one suggestion:
+
+* First construct a logical indexing vector that is TRUE when the corresponding element of `problem.7.region.data` is equal to the input argument region name and FALSE otherwise, and save this in a variable.
+    
+* Use this logical indexing vector to select the elements of `problem.7.number.of.widgets.sold.data` that occurred in the specified region, and save this vector in a variable.
+    
+* Add the elements of this filtered vector, and save this in a variable.
+    
+* Return the value of this sum.
+    
+There are more compressed ways to do this, but it's fine (and good!) to break the function into a sequence of intermediate steps.
+
+There's nothing to report here, but write your code clearly so the TAs can understand what you're doing.
+
+**Solution**
+
+```{r}
+regional.widgets.sold <- function(region) {
+  indexing.vector <- (region.factor == region)
+  
+  regional.widgets.sold <- problem.7.number.of.widgets.sold.data[indexing.vector]
+  
+  total.sales <- sum(regional.widgets.sold)
+  
+  return(total.sales)
+}
+```
+
+
+
+## Part (d): North region total number of widgets sold
+
+Use the function you defined in Part (c) to calculate the total number of widgets sold for the North region. Store your result in a variable and report it using a `cat()` statement, displaying the value with 2 decimal places.
+
+**Hint:** You should get the same value as you did in Part (b).
+
+**Solution**
+
+```{r}
+north.total.widgets.sold <- regional.widgets.sold("North")
+
+cat(
+  "Northern total sales:",
+  formatC(
+    north.total.widgets.sold,
+    format = 'f',
+    digits = 0,
+    big.mark = ','
+  )
+)
+```
+
+
+
+## Part (e): East total number of widgets sold
+
+Use the function you defined in Part (c) to calculate the total number of widgets sold for the East region. Store your result in a variable and report it using a `cat()` statement, displaying the value with 2 decimal places.
+
+**Solution**
+
+```{r}
+east.total.widgets.sold <- regional.widgets.sold("East")
+
+cat(
+  "East total sales:",
+  formatC(
+    east.total.widgets.sold,
+    format = 'f',
+    digits = 0,
+    big.mark = ','
+  )
+)
+```
+
+
+
+## Part (f): South total number of widgets sold
+
+Use the function you defined in Part (c) to calculate the total number of widgets sold for the South region. Store your result in a variable and report it using a `cat()` statement, displaying the value with 2 decimal places.
+
+**Solution**
+
+```{r}
+south.total.widgets.sold <- regional.widgets.sold("South")
+
+cat(
+  "South total sales:",
+  formatC(
+    south.total.widgets.sold,
+    format = 'f',
+    digits = 0,
+    big.mark = ','
+  )
+)
+```
+
+
+
+## Part (g): West total number of widgets sold
+
+Use the function you defined in Part (c) to calculate the total number of widgets sold for the West region. Store your result in a variable and report it using a `cat()` statement, displaying the value with 2 decimal places.
+
+**Solution**
+
+```{r}
+west.total.widgets.sold <- regional.widgets.sold("West")
+
+cat(
+  "West total sales:",
+  formatC(
+    west.total.widgets.sold,
+    format = 'f',
+    digits = 0,
+    big.mark = ','
+  )
+)
+```
+
+
+## Part (h): Named vector
+
+Construct a named vector where the names are the four regions in correct order, and the corresponding values of the named vector are the regional total number of widgets sold that we've calculated in parts (d) through (g).
+
+Save the named vector in a variable, and display it directly for the TAs to check your work.
+
+**Solution**
+
+```{r}
+named.vector <- c(
+  'North' = north.total.widgets.sold,
+  'East' = east.total.widgets.sold,
+  'South' = south.total.widgets.sold,
+  'West' = west.total.widgets.sold
+)
+
+named.vector
+```
+
+
+
+## Part (i): Relative proportions table
+
+Finally, we can construct a table of the relative proportions of the total number of widgets sold across the four regions.
+
+Recall that the `proportions()` function takes one input argument, which must be a table.
+
+In part (h), we constructed a named vector, not a table.
+
+Use the `as.table()` function to convert the named vector in part (h) to a table, and then use this table to construct a table of the relative proportions of the total number of widgets sold across the four regions.
+
+Directly display the relative proportions table for the TAs to grade.
+
+**Solution**
+
+```{r}
+# Use the `as.table()` function to convert the named vector in part (h) to a table
+cat('Total widgets sold per region as a table:\n')
+
+sales.as.table <- as.table(named.vector)
+
+sales.as.table
+
+# use this table to construct a table of the relative proportions of total widgets sold per region
+cat('\nRelative Proportions Table:\n')
+
+rel.prop.table <- round(proportions(sales.as.table), digits = 2)
+
+rel.prop.table
+```
+
+
+
+
+
+
+
+
+
+
