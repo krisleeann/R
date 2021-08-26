@@ -1,6 +1,5 @@
 ---
 title: "Problem Set 3 Solutions"
-subtitle: 'CSCI 5a: Programming in R'
 output:
   pdf_document: default
   html_notebook: default
